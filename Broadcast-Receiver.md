@@ -18,7 +18,8 @@ There are two ways to register Broadcast Receivers:
 1. Statically (Using manifest.xml)
 2. Dynamically (Using Kotlin/Java Code)
 
-> **Note:** In Broadcast Receiver there is `onReceive()` method which receives broadcasts
+> **Note**: Broadcasts are sent **Asynchronously** and receive inside `onReceive()`
+> method which executed on the Main thread.
 
 ---
 
@@ -30,7 +31,7 @@ the `Context:sendBroadcast`.
 
 <br />
 
-**Registering Broadcast in manifest.xml:**
+**Registering Broadcast in manifest.xml :**
 
 ```xml
 
@@ -39,7 +40,7 @@ the `Context:sendBroadcast`.
 
 <br />
 
-**Broadcast Receiver as a separate class**
+**Broadcast Receiver as a separate class :**
 
 ```kotlin
 class MyReceiver : BroadcastReceiver() {
@@ -49,7 +50,7 @@ class MyReceiver : BroadcastReceiver() {
 }
 ```
 
-**Broadcast Receiver as inner class**
+**Broadcast Receiver as inner class :**
 
 ```kotlin
 companion object {
@@ -117,8 +118,7 @@ Intent(this, MyReceiver::class.java).setAction("my.custom.action").also {
 
 <br/>
 
-> **Note**: Broadcasts are sent Asynchronously and receive inside `OnReceive()`
-> method which executed on the Main thread.
+
 
 
 
