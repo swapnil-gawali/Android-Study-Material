@@ -253,7 +253,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnSendBroadcast.setOnClickListener {
-            sendOrderedBroadcast(Intent("my.custom.action"), null)
+            sendOrderedBroadcast(Intent("my.custom.action"), null) // here null is the string permission
         }
     }
 
@@ -460,9 +460,8 @@ class MainActivity : AppCompatActivity() {
 
 **Aborting Ordered Broadcast:**
 
-If we do not wish to execute the next Ordered Broadcast Receivers then after executing
-first receiver we can abort the broadcast using `abortBroadcast()` method. In this case,
-all Ordered Broadcasts are aborted.
+If we do not wish to execute the next Ordered Broadcast Receivers then after executing first receiver we can abort the
+broadcast using `abortBroadcast()` method. In this case, all Ordered Broadcasts are aborted.
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -564,6 +563,110 @@ class MainActivity : AppCompatActivity() {
 
 > In the above example, we have called `abortBroadcast()` method inside `secondBroadcast`. In this case,
 > `firstReceiver` and `resultReceiver` will not get executed.
+
+<br/>
+
+**Register and Un-Register Broadcast Receiver:**
+
+To avoid memory leaks, its necessary to un-register receiver. We usually registers a receiver in
+`onResume()` method and un-register in `onPause()` method. If we forgot to un-register a receiver, then it will throw **
+Leaked Intent Receiver** error.
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val TAG = MainActivity::class.java.simpleName
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // registering receiver to listen for the event
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also { intentFilter ->
+            registerReceiver(myReceiver, intentFilter)
+        }
+    }
+
+    override fun onPause() {
+        // un-register receiver to avoid memory leaks
+        unregisterReceiver(myReceiver)
+        super.onPause()
+    }
+
+    private val myReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: myReceiver")
+        }
+    }
+}
+```
+
+> **Note:** We should always use dynamic receiver (kotlin code) to listen to the events whenever app is running.
+> manifest declared (static) broadcasts receives a result even when app is not running and hence it may
+> leak memory.
+
+<br/>
+
+### Sticky Broadcast (Deprecated in Android 21 Lollipop):
+
+Whenever we send a broadcast, it gets processed and dies. In Sticky Broadcast, even when app is not in foreground and
+broadcast event is already occurred then it will also notify for the previous occurred events.
+
+Sticky Broadcasts are only applicable for the dynamic (kotlin code) receivers. We can send Sticky Broadcast
+using `sendStickyBroadcast()` method.
+
+For using Sticky Broadcast, we need to define manifest
+permission `<uses-permission android:name="android.permission.BROADCAST_STICKY" />`
+
+> **Note:** Due to the poor security and poor protection level, Sticky Broadcasts are
+> deprecate from the Android 21 (Lollipop).
+
+<br/>
+
+**Enhancing App Security using Broadcast Receivers:**
+
+We can enhance Broadcast Receiver security by using `<permission>` or `<uses-permission>` tag in manifest. Also, we can
+narrow down the Broadcast Receiver scope using `android:exported` property.
+
+<br/>
+
+**Send / Receive Broadcast from One app to Another:**
+
+In the following example, we can register to receive a broadcast as follows:
+
+```kotlin
+IntentFilter("my.custom.action").also { intentFilter ->
+    registerReceiver(myReceiver, intentFilter)
+}
+```
+
+And then, we can send the broadcast from the another app as follows:
+
+```kotlin
+Intent("my.custom.action").also { intent ->
+    sendBroadcast(intent)
+}
+```
+
+<br/>
+
+### Local Broadcast Receiver:
+
+Local Broadcast Receiver is used send broadcasts with the same application. It is useful for communication between two
+android components like Service and Activity etc.
+
+
+
+
+
+
+
 
 
 

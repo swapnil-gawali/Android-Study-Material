@@ -1,0 +1,3 @@
+<permission> vs <usage-permission>
+
+local broadcast manager
