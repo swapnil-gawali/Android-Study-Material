@@ -186,22 +186,37 @@ class MainActivity : AppCompatActivity() {
 ```kotlin
 class MainActivity : AppCompatActivity() {
 
-    private val myReceiver: MyReceiver by lazy { MyReceiver() }
-    private val myInnerReceiver: MyInnerReceiver by lazy { MyInnerReceiver() }
+    private lateinit var binding: ActivityMainBinding
+    private val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         IntentFilter("my.custom.action").also { intentFilter ->
-            registerReceiver(myReceiver, intentFilter)
+            registerReceiver(firstReceiver, intentFilter)
         }
 
         IntentFilter("my.custom.action").also { intentFilter ->
-            registerReceiver(myInnerReceiver, intentFilter)
+            registerReceiver(secondReceiver, intentFilter)
         }
 
         binding.btnSendBroadcast.setOnClickListener {
-            sendBroadcast(Intent("my.custom.action"))
+            sendOrderedBroadcast(Intent("my.custom.action"), null) // here null is the string permission
+        }
+    }
+
+    private val firstReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: first receiver")
+        }
+    }
+
+    private val secondReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: second receiver")
         }
     }
 }
@@ -209,61 +224,346 @@ class MainActivity : AppCompatActivity() {
 
 <br/>
 
-**Ordered Broadcasts:**
+### Ordered Broadcasts:
 
 Ordered Broadcasts are sent to the receivers in order based on priority set in Intent.
 
 For Ordered Broadcasts, we need to use `sendOrderedBroadcast()` method.
 
 ```kotlin
-class MyReceiver : BroadcastReceiver() {
-
-    private val TAG = MyReceiver::class.java.simpleName
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        Log.wtf(TAG, "onReceive: changed")
-    }
-}
-```
-
-```kotlin
 class MainActivity : AppCompatActivity() {
 
-    private val myReceiver: MyReceiver by lazy { MyReceiver() }
-    private val myInnerReceiver: MyInnerReceiver by lazy { MyInnerReceiver() }
+    private lateinit var binding: ActivityMainBinding
+    private val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         IntentFilter("my.custom.action").also { intentFilter ->
             intentFilter.priority = 40
-            registerReceiver(myReceiver, intentFilter)
+            registerReceiver(firstReceiver, intentFilter)
         }
 
         IntentFilter("my.custom.action").also { intentFilter ->
             intentFilter.priority = 50
-            registerReceiver(myInnerReceiver, intentFilter)
+            registerReceiver(secondReceiver, intentFilter)
         }
 
         binding.btnSendBroadcast.setOnClickListener {
-            sendOrderedBroadcast(Intent("my.custom.action"), null) // here null is the permission string
+            sendOrderedBroadcast(Intent("my.custom.action"), null)
         }
     }
 
-    companion object {
-        class MyInnerReceiver : BroadcastReceiver() {
-            private val TAG = MyInnerReceiver::class.java.simpleName
+    private val firstReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: first receiver")
+        }
+    }
 
-            override fun onReceive(context: Context?, intent: Intent?) {
-                Log.wtf(TAG, "onReceive: Inner class")
+    private val secondReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: second receiver")
+        }
+    }
+}
+```
+
+> In the above example, `secondReceiver` will receive broadcast first due to its high priority
+> than `firstReceiver`.
+
+<br/>
+
+**Send ResultCode and ResultData in Ordered Broadcasts:**
+
+In Ordered Broadcast Receiver, we can set ResultCode, Bundle, ResultData while sending broadcasts. When first receiver
+receives the data, then it can modify it and forward to the next receiver.
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val TAG = MainActivity::class.java.simpleName
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            intentFilter.priority = 40
+            registerReceiver(firstReceiver, intentFilter)
+        }
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            intentFilter.priority = 50
+            registerReceiver(secondReceiver, intentFilter)
+        }
+
+        binding.btnSendBroadcast.setOnClickListener {
+            Intent("my.custom.action").also { intent ->
+                val bundle = Bundle()
+                bundle.putString("key", "Hello World!")
+                sendOrderedBroadcast(intent, null, null, null, 100, "Initial Data", bundle)
+            }
+        }
+    }
+
+    private val firstReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: firstReceiver")
+
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: firstReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: firstReceiver $initialData")
+                Log.wtf(TAG, "onReceive: firstReceiver $message")
+            }
+        }
+    }
+
+    private val secondReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: secondReceiver")
+
+            // execute this if only this broadcast is ordered, otherwise functionality will break
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: secondReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: secondReceiver $initialData")
+                Log.wtf(TAG, "onReceive: secondReceiver $message")
+
+                // now modify the data and forward it to the firstReceiver
+                val bundle = Bundle()
+                bundle.putString("key", "Modified message from secondReceiver")
+                setResult(200, "hello from secondReceiver", bundle)
             }
         }
     }
 }
 ```
 
-> In the above example, `MyInnerReceiver` will receive broadcast first due to its high priority
-> than `MyReceiver`.
+> In the above example, `secondReceiver` will execute first, then it will get the data,
+> modify it and forward to the `firstReceiver`. After executing `firstReceiver`, the execution
+> will stop. But, in case we want to send data to the last `ResultReceiver` we need to create a
+> separate receiver that will execute at the end of all receiver.
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val TAG = MainActivity::class.java.simpleName
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            intentFilter.priority = 40
+            registerReceiver(firstReceiver, intentFilter)
+        }
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            intentFilter.priority = 50
+            registerReceiver(secondReceiver, intentFilter)
+        }
+
+        // registering resultReceiver
+        IntentFilter("my.custom.action").also { intentFilter ->
+            registerReceiver(resultReceiver, intentFilter)
+        }
+
+        binding.btnSendBroadcast.setOnClickListener {
+            Intent("my.custom.action").also { intent ->
+                val bundle = Bundle()
+                bundle.putString("key", "Hello World!")
+                sendOrderedBroadcast(intent, null, resultReceiver, null, 100, "Initial Data", bundle)
+            }
+        }
+    }
+
+    private val firstReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: firstReceiver")
+
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: firstReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: firstReceiver $initialData")
+                Log.wtf(TAG, "onReceive: firstReceiver $message")
+            }
+        }
+    }
+
+    private val secondReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: secondReceiver")
+
+            // execute this if only this broadcast is ordered, otherwise functionality will break
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: secondReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: secondReceiver $initialData")
+                Log.wtf(TAG, "onReceive: secondReceiver $message")
+
+                // now modify the data and forward it to the firstReceiver
+                val bundle = Bundle()
+                bundle.putString("key", "Modified message from second receiver")
+                setResult(200, "hello from second receiver", bundle)
+            }
+        }
+    }
+
+    private val resultReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            // execute this if only this broadcast is ordered, otherwise functionality will break
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: resultReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: resultReceiver $initialData")
+                Log.wtf(TAG, "onReceive: resultReceiver $message")
+            }
+        }
+    }
+}
+```
+
+> In the above example, we do not need to specify priority for the `resultReceiver`.
+> `resultReceiver` are made to get execute at the end of the all ordered broadcast receivers.
+
+<br/>
+
+**Aborting Ordered Broadcast:**
+
+If we do not wish to execute the next Ordered Broadcast Receivers then after executing
+first receiver we can abort the broadcast using `abortBroadcast()` method. In this case,
+all Ordered Broadcasts are aborted.
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val TAG = MainActivity::class.java.simpleName
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            intentFilter.priority = 40
+            registerReceiver(firstReceiver, intentFilter)
+        }
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            intentFilter.priority = 50
+            registerReceiver(secondReceiver, intentFilter)
+        }
+
+        IntentFilter("my.custom.action").also { intentFilter ->
+            registerReceiver(resultReceiver, intentFilter)
+        }
+
+        binding.btnSendBroadcast.setOnClickListener {
+            Intent("my.custom.action").also { intent ->
+                val bundle = Bundle()
+                bundle.putString("key", "Hello World!")
+                sendOrderedBroadcast(
+                    intent,
+                    null,
+                    resultReceiver,
+                    null,
+                    100,
+                    "Initial Data",
+                    bundle
+                )
+            }
+        }
+    }
+
+    private val firstReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: firstReceiver")
+
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: firstReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: firstReceiver $initialData")
+                Log.wtf(TAG, "onReceive: firstReceiver $message")
+            }
+        }
+    }
+
+    private val secondReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            Log.wtf(TAG, "onReceive: secondReceiver")
+
+            // execute this if only this broadcast is ordered, otherwise functionality will break
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: secondReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: secondReceiver $initialData")
+                Log.wtf(TAG, "onReceive: secondReceiver $message")
+
+                abortBroadcast() // aborting all next broadcasts
+            }
+        }
+    }
+
+    private val resultReceiver = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            // execute this if only this broadcast is ordered, otherwise functionality will break
+            if (isOrderedBroadcast) {
+                val initialCode = resultCode
+                val initialData = resultData
+                val initialBundle = getResultExtras(true)
+                val message = initialBundle.getString("key")
+
+                Log.wtf(TAG, "onReceive: resultReceiver $initialCode")
+                Log.wtf(TAG, "onReceive: resultReceiver $initialData")
+                Log.wtf(TAG, "onReceive: resultReceiver $message")
+            }
+        }
+    }
+}
+```
+
+> In the above example, we have called `abortBroadcast()` method inside `secondBroadcast`. In this case,
+> `firstReceiver` and `resultReceiver` will not get executed.
 
 
 
