@@ -621,8 +621,12 @@ broadcast event is already occurred then it will also notify for the previous oc
 Sticky Broadcasts are only applicable for the dynamic (kotlin code) receivers. We can send Sticky Broadcast
 using `sendStickyBroadcast()` method.
 
-For using Sticky Broadcast, we need to define manifest
-permission `<uses-permission android:name="android.permission.BROADCAST_STICKY" />`
+For using Sticky Broadcast, we need to define manifest permission
+
+```xml
+
+<uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+```
 
 > **Note:** Due to the poor security and poor protection level, Sticky Broadcasts are
 > deprecate from the Android 21 (Lollipop).
@@ -661,6 +665,45 @@ Intent("my.custom.action").also { intent ->
 Local Broadcast Receiver is used send broadcasts with the same application. It is useful for communication between two
 android components like Service and Activity etc.
 
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.btnSendBroadcast.setOnClickListener {
+            // Send Broadcast
+            val intent = Intent("my.action")
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Register receiver
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(myReceiver, IntentFilter("my.action"))
+    }
+
+    override fun onPause() {
+        // Unregister receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(myReceiver)
+        super.onPause()
+    }
+
+    private val myReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Toast.makeText(context, "MyReceiver", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+```
 
 
 
