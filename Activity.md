@@ -15,7 +15,7 @@ Activity is a visual representation of an app where user can interact with the U
 
 ### Intents:
 
-Intents is intention to perform an action like start/launch Activity, start a Service, deliver broadcasts etc.
+Intents are intention to perform an action like start/launch Activity, start a Service, deliver broadcasts etc.
 
 <br />
 
