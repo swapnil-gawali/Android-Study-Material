@@ -1,3 +1,6 @@
 <permission> vs <usage-permission>
 
 local broadcast manager
+
+application class
+different types of contexts
