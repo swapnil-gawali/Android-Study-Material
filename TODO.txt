@@ -2,5 +2,23 @@
 
 local broadcast manager
 
-application class
-different types of contexts
+MVVM
+Coroutines and its scopes
+navigation components
+fragments
+flow
+paging
+room-sqlite
+kotlin high order functions like map etc
+kotlin apply, also etc
+
+material design
+adapters
+styles and themes
+layouts (mainly coordinator and constraint)
+android file system
+retrofit/okhttp interceptors
+dagger hilt
+
+image processing libraries
+android permissions

@@ -245,9 +245,7 @@ For achieve this scenario, we need to do the following changes:
 ```
 
 ```kotlin
-override fun onConfigurationChanged(newConfig: Configuration) {
-    super.onConfigurationChanged(newConfig)
-}
+
 ```
 
 > **Note:** This is **NOT** recommended solution to handle configuration changes.
@@ -472,22 +470,24 @@ the activity (now on top), through `onNewIntent()`).
 
 There is no value for the `launchMode` attribute that produces this behavior.
 
-`FLAG_ACTIVITY_CLEAR_TOP` is most often used in conjunction with `FLAG_ACTIVITY_NEW_TASK`. When used together, these flags
-are a way of locating an existing activity in another task and putting it in a position where it can respond to the
-intent.
-
+`FLAG_ACTIVITY_CLEAR_TOP` is most often used in conjunction with `FLAG_ACTIVITY_NEW_TASK`. When used together, these
+flags are a way of locating an existing activity in another task and putting it in a position where it can respond to
+the intent.
 
 ### Loaders:
 
-The Loader API used to load data from content providers or other data source for display in an `FragmentActivity` or `Fragment`.
+The Loader API used to load data from content providers or other data source for display in an `FragmentActivity`
+or `Fragment`.
 
 **Some problems you might encounter without loaders:**
 
-1. If you fetch the data directly in the activity or fragment, your users will suffer from lack of responsiveness due to performing potentially slow queries from the UI thread.
+1. If you fetch the data directly in the activity or fragment, your users will suffer from lack of responsiveness due to
+   performing potentially slow queries from the UI thread.
 
 
-2. If you fetch the data from another thread, perhaps with `AsyncTask`, then you're responsible for managing both the thread and the UI thread through various activity or fragment lifecycle events, such as `onDestroy()` and configurations changes.
-
+2. If you fetch the data from another thread, perhaps with `AsyncTask`, then you're responsible for managing both the
+   thread and the UI thread through various activity or fragment lifecycle events, such as `onDestroy()` and
+   configurations changes.
 
 **Loaders solve these problems and includes other benefits. For example:**
 
@@ -500,12 +500,57 @@ The Loader API used to load data from content providers or other data source for
 3. Loaders persist and cache results across configuration changes to prevent duplicate queries.
 
 
-4. Loaders can implement an observer to monitor for changes in the underlying data source. For example, CursorLoader automatically registers a ContentObserver to trigger a reload when data changes.
+4. Loaders can implement an observer to monitor for changes in the underlying data source. For example, CursorLoader
+   automatically registers a ContentObserver to trigger a reload when data changes.
 
+<br/>
 
+### Application Class
 
+Base class for maintaining global application state. You can provide your own implementation by creating a subclass and
+specifying the fully-qualified name of this subclass as the `android:name` attribute in your
+AndroidManifest.xml's `<application>` tag. The Application class, or your subclass of the Application class, is
+instantiated before any other class when the process for your application/package is created.
 
+<br/>
 
+### Context
 
+The Context in Android is actually the context of what we are talking about and where we are currently present.
+
+Few important points about the context:
+
+1. It is the context of the current state of the application.
+2. It can be used to get information regarding the activity and application.
+3. It can be used to get access to resources, databases, and shared preferences, and etc.
+4. Both the Activity and Application classes extend the Context class.
+
+<br/>
+
+#### Application Context:
+
+It is an instance that is the singleton and can be accessed in activity via `getApplicationContext()`. This context is
+tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is
+separate from the current context or when you are passing a context beyond the scope of activity.
+
+**Example Use:** If you have to create a singleton object for your application and that object needs a context, always
+pass the application context.
+
+If you pass the activity context here, it will lead to the memory leak as it will keep the reference to the activity and
+activity will not be garbage collected.
+
+In case, when you have to initialize a library in an activity, always pass the application context, not the activity
+context.
+
+You only use `getApplicationContext()` when you know you need a Context for something that may live longer than any
+other likely Context you have at your disposal.
+
+<br/>
+
+#### Activity Context:
+
+This context is available in an activity. This context is tied to the lifecycle of an activity.
+
+Whenever you are in Activity, for any UI operations like showing toast, dialogs etc., use the Activity Context.
 
 
