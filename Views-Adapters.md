@@ -547,3 +547,130 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+
+<br/>
+
+#### Creating Custom Spinner
+
+For implementing custom spinner we need to create custom `ArrayAdapter` class which will override `getView()` and
+`getDropDownView()` methods.
+
+`custom_spinner_item.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+    <TextView
+            android:id="@+id/tv_spinner_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="Dummy Spinner Text"/>
+
+</LinearLayout>
+```
+
+`CustomArrayAdapter.kt`
+
+```kotlin
+class CustomArrayAdapter(context: Context, countryList: Array<String>) :
+    ArrayAdapter<String>(context, 0, countryList) {
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return initView(position, convertView, parent)
+    }
+
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return initView(position, convertView, parent)
+    }
+
+    private fun initView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val country = getItem(position)
+
+        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.custom_spinner_item, parent, false)
+
+        val tvSpinnerTitle: TextView = view.findViewById(R.id.tv_spinner_title)
+        tvSpinnerTitle.text = country
+
+        return view
+    }
+}
+```
+
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private val countryList = arrayOf(
+        "All Countries",
+        "India",
+        "UK",
+        "USA",
+        "France",
+        "Japan",
+        "Germany",
+        "Russia",
+    )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // initializing spinner
+        val spinner: Spinner = findViewById(R.id.spinner)
+
+        // creating adapter object
+        val adapter = CustomArrayAdapter(this, countryList)
+
+        // setting up adapter
+        spinner.adapter = adapter
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCountry = parent!!.getItemAtPosition(position) as String
+                Toast.makeText(
+                    this@MainActivity,
+                    "item Selected $selectedCountry",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+        }
+    }
+}
+```
+
+In the above example, `CustomArrayAdapter.kt` overrides two methods `getView()` and `getDropDownView()`.
+
+`getView()`
+
+This method defines appearance of the item present in the spinner when spinner is not touched.
+
+`getDropDownView()`
+
+This method defines appearance of the item in the dropdown. When the spinner is open, how the item in the dropdown looks
+like will be defined by this function.
+
+`initView()`
+
+This is custom method which returns inflate custom layout and set data to the item in the spinner and it returns
+convertView if view is already created else inflate the layout.
+
+
