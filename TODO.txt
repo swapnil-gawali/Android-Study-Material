@@ -13,7 +13,7 @@ kotlin high order functions like map etc
 kotlin apply, also etc
 
 material design
-adapters
+
 styles and themes
 layouts (mainly coordinator and constraint)
 android file system

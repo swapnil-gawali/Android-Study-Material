@@ -63,7 +63,7 @@ image, complete the following steps:
 
 2. Invoke an intent that includes the `ACTION_REQUEST_SCHEDULE_EXACT_ALARM` intent action.
 
-![Alarms & Reminders](alarms-and-reminders.svg)
+![Alarms & Reminders](images/alarms-and-reminders.svg)
 
 
 <br/>

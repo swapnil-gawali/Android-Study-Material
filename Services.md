@@ -659,7 +659,7 @@ class MainActivity : AppCompatActivity() {
 
 ### Service Lifecycle:
 
-![Service Lifecycle](Service-Lifecycle.png)
+![Service Lifecycle](images/Service-Lifecycle.png)
 
 <br/>
 

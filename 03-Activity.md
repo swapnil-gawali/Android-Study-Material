@@ -133,7 +133,7 @@ When we need to use material design in our app then we can use `AppCompatActivit
 
 **Activity Lifecycle:**
 
-![Android Activity Lifecycle](Android-Activity-Lifecycle.png)
+![Android Activity Lifecycle](images/Android-Activity-Lifecycle.png)
 
 **onCreate :**
 

@@ -80,7 +80,7 @@ fun fibonacci(num: Int): Int {
 
 #### Big O Graph:
 
-![Big O Graph](big-o-graph.png)
+![Big O Graph](images/big-o-graph.png)
 
 
 <br/>
