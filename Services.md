@@ -554,11 +554,11 @@ Can use this flag if we do not want to use other flags.
 **Started / Intent Service VS Bound Service:**
 
 | Started / Intent Service                            | Bound Service                                                               |
-|:----------------------------------------------------|-----------------------------------------------------------------------------|
+|:----------------------------------------------------|:----------------------------------------------------------------------------|
 | Just to accomplish task (may be long tasks)         | For long standing connection                                                |
 | Invoked by `startService()`                         | Invoked by `bindService()`                                                  |
 | `onBind()` returns `null`                           | `onBind()` returns `IBinder`                                                |
-| Continue to run even calling component is destroyed | if the calling component is destroyed then Bound Servive also get Destroyed |
+| Continue to run even calling component is destroyed | if the calling component is destroyed then Bound Service also get Destroyed |
 
 <br/>
 
