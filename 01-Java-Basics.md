@@ -759,8 +759,6 @@ public class Main {
 
 ## Generics
 
----
-
 Before generics, we can store any type of objects in the collection, i.e., non-generic. Now generics force the java
 programmer to store a specific type of objects. It makes the code stable by detecting the bugs at compile time.
 
@@ -878,7 +876,7 @@ public class Main {
 
 ### Boxing & Unboxing
 
-Boxing: The automatic conversion of primitive data types into its equivalent Wrapper type is known as boxing.
+1. **Boxing:** The automatic conversion of primitive data types into its equivalent Wrapper type is known as boxing.
 
 ```java
 public class Main {
@@ -889,7 +887,7 @@ public class Main {
 }
 ```
 
-Unboxing: The automatic conversion of object data types into its equivalent primitive type is known as Unboxing.
+2. **Unboxing:** The automatic conversion of object data types into its equivalent primitive type is known as Unboxing.
 
 ```java
 public class Main {
