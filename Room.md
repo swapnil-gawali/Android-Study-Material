@@ -60,6 +60,27 @@ class UserEntity(
 
 This is an interface that contains methods to access DB, and it is annotated with `@Dao` annotation.
 
+```kotlin
+@Dao
+interface UserDao {
+
+    @Insert
+    fun insertUser(userEntity: UserEntity): Int
+
+    @Update
+    fun updateUser(userEntity: UserEntity): Int
+
+    @Delete
+    fun deleteUser(userEntity: UserEntity): Int
+
+    @Query("SELECT * FROM user WHERE first_name = :firstName")
+    fun getUser(firstName: String): UserEntity
+
+    @Query("SELECT * FROM user")
+    fun getAllUsers(): List<UserEntity>
+}
+```
+
 `@Dao` is used to annotate data access object interface.
 
 `@Insert` is used to implement insert operation.
@@ -124,6 +145,8 @@ migrations. In the `entities` field, we can provide multiple entities associated
 
 For insert operation, we need to get DAO using database object and call the method associate with it.
 
+`UserDao.kt`
+
 ```kotlin
 @Dao
 interface UserDao {
@@ -131,6 +154,8 @@ interface UserDao {
     fun insertUser(userEntity: UserEntity): Int // returns id of inserted user
 }
 ```
+
+`MainActivity.kt`
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -236,4 +261,100 @@ val updatedUserId = userDao.deleteUser(userEntity)
 
 If we change any database schema, it has to perform migration. Migration preserves user data in case of change of entity
 and database schema.
+
+> Migration is the safe process to update database schema.
+
+When writing migrations, we need to specify start version and end version.
+
+```kotlin
+// increase database version by 1, previously it was 1, therefore we have increased to 2
+@Database(version = 2, entities = [UserEntity::class])
+abstract class MyDatabase : RoomDatabase() {
+
+    abstract fun userDao(): UserDao
+
+    companion object {
+        // Singleton prevents multiple instances of database opening at the
+        // same time.
+        @Volatile
+        private var INSTANCE: MyDatabase? = null
+
+        // write custom migration schema
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "CREATE TABLE `profile` (`id` INTEGER, `description` TEXT, " +
+                            "PRIMARY KEY(`id`))"
+                )
+            }
+        }
+
+
+        fun getDatabase(context: Context): MyDatabase {
+            // if the INSTANCE is not null, then return it,
+            // if it is, then create the database
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    MyDatabase::class.java,
+                    "my_database"
+                )
+                    .addMigrations(MIGRATION_1_2)
+                    .build()
+                INSTANCE = instance
+                // return instance
+                instance
+            }
+        }
+    }
+}
+```
+
+In the above example, we have want to create profile table into existing database, hence we wrote migration and pass
+this migration to the database builder. We can pass multiple migration separating by comma.
+
+<br/>
+
+### TypeConvertors
+
+When we want to store custom type of objects like list, dates etc. then we need to use TypeConvertors. For using
+TypeConvertors method must be annotated with the `@TypeConvertor`.
+
+Pair of methods that converts a custom class to and from a known type that Room cam persist.
+
+`DateTypeConvertor.kt`
+
+```kotlin
+class DateTypeConvertor {
+
+    // this function will convert Long to Date type
+    @TypeConverter
+    fun toDate(value: Long?): Date? {
+        return if (value == null) null else Date(value)
+    }
+
+    // this function will convert Date to Long type
+    @TypeConverter
+    fun toLong(value: Date?): Long? {
+        return value?.time
+    }
+}
+```
+
+`MyDatabase.kt`
+
+```kotlin
+// define TypeConvertors at the database constructor class. We can pass multiple type convertors seperating by comma.
+@TypeConverters(DateTypeConvertor::class)
+abstract class MyDatabase : RoomDatabase() 
+```
+
+`MainActivity.kt`
+
+```kotlin
+val user = userDao.getUser("Swapnil")
+Log.wtf(TAG, "onCreate: " + user.createdAt)
+```
+
+In the above example, we stored data in SQLite as long format and while retrieving, converted to the date format.
 
