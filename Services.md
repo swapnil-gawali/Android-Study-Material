@@ -663,9 +663,21 @@ class MainActivity : AppCompatActivity() {
 
 <br/>
 
-
-
 ### Enhancing App Security with Service:
+
+When we use `android:exported="true"` then service can be accessible from the other third party application. As per
+google recommendation, it is bad practice.
+
+For restricting accessibility of service, we can use `android:exported:"false"`. In this case this service won't be
+accessible from the third party apps.
+
+```xml
+
+<service
+        android:name=".MyService"
+        android:exported="false"/>
+```
+
 
 
 

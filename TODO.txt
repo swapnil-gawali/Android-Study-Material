@@ -8,7 +8,7 @@ navigation components
 fragments
 flow
 paging
-room-sqlite
+
 kotlin high order functions like map etc
 kotlin apply, also etc
 
@@ -19,6 +19,15 @@ layouts (mainly coordinator and constraint)
 android file system
 retrofit/okhttp interceptors
 dagger hilt
-
+animations
 image processing libraries
 android permissions
+
+anonymous classes
+
+threads, looper, handler, asynctask
+
+comparable interface
+serialization
+singleton pattern
+builder pattern
