@@ -583,7 +583,7 @@ In java there are three types of exceptions:
 2. Unchecked or Runtime
 3. Error
 
-![](C:\Users\Swapnil\IdeaProjects\Android-Study-Material\images\hierarchy-of-exception-handling.png)
+![](images\hierarchy-of-exception-handling.png)
 
 <br/>
 
@@ -874,6 +874,39 @@ public class Main {
 
 <br/>
 
+### Multiple Type Parameters
+
+**Method Example:**
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        printKeyValue("name", "Swapnil Gawali");
+        printKeyValue("Age", 25);
+    }
+
+    public static <K, V> void printKeyValue(K key, V value) {
+        System.out.println("Key : " + key + " Value: " + value);
+    }
+}
+```
+
+**Class Example:**
+
+```java
+public class CustomKeyValue<K, V> {
+    private final K key;
+    private final V value;
+
+    public CustomKeyValue(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+}
+```
+
+<br/>
+
 ### Boxing & Unboxing
 
 1. **Boxing:** The automatic conversion of primitive data types into its equivalent Wrapper type is known as boxing.
@@ -900,7 +933,75 @@ public class Main {
 
 <br/>
 
+## Collection
 
+The Collection in Java is a framework that provides an architecture to store and manipulate the group of objects.
+
+Java Collections can achieve all the operations that you perform on a data such as searching, sorting, insertion,
+manipulation, and deletion.
+
+> In simple words, Collection means a single unit of objects.
+
+<br/>
+
+### Collection Hierarchy
+
+![Collection Hierarchy](images\java-collection-hierarchy.png)
+
+<br/>
+
+### Iterable Interface
+
+The Iterable interface is the root interface for all the collection classes which allows us to iterate over items in
+collections.
+
+#### Methods of Iterator interface
+
+There are only three methods in the Iterator interface. They are:
+
+| Method                   | Description                                                                  |
+|--------------------------|------------------------------------------------------------------------------|
+| public boolean hasNext() | It returns true if the iterator has more elements otherwise it returns false |
+| public Object next()     | It returns the element and moves the cursor pointer to the next element.     |
+| public void remove()     | It removes the last element returned by the iterator. It is less used.       |
+
+<br/>
+
+### Collection Interface
+
+The Collection interface is the interface which is implemented by all the classes in the collection framework. It
+declares the methods that every collection will have. In other words, we can say that the Collection interface builds
+the foundation on which the collection framework depends.
+
+Some methods of Collection interface are `Boolean add ( Object obj)`, `Boolean addAll ( Collection c)`, `void clear()`,
+etc. which are implemented by all the subclasses of Collection interface.
+
+<br/>
+
+### List Interface
+
+List interface is the child interface of Collection interface. It inhibits a list type data structure in which we can
+store the ordered collection of objects. It can have duplicate values.
+
+List interface is implemented by the classes `ArrayList`, `LinkedList`, `Vector`, and `Stack`.
+
+To instantiate the List interface, we must use :
+
+```java
+List<data-type>list1=new ArrayList();
+```
+
+```java
+List<data-type>list1=new LinkedList();
+```
+
+```java
+List<data-type>list1=new Vector();
+```
+
+```java
+List<data-type>list1=new Stack();
+```
 
 
 
