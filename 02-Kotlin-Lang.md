@@ -426,7 +426,217 @@ fun main(args: Array<String>) {
 
 #### continue
 
+```kotlin
+fun main(args: Array<String>) {
+    val range = 1..10
 
+    // print even numbers
+    for (number in range) {
+        if (number % 2 == 0) continue
 
+        println(number)
+    }
 
+    // print odd numbers
+    myForEach@ for (number in range) {
+        if (number % 2 == 1) continue@myForEach // named loop
 
+        println(number)
+    }
+}
+```
+
+<br/>
+
+### Extension Functions
+
+Extension function adds new function to the classes and this function behaves like `static`.
+
+```kotlin
+fun main(args: Array<String>) {
+    val name = "Swapnil Gawali"
+
+    println(name.trimAndUppercase()) // this behaves like it is declared in String class
+}
+
+// extension function
+fun String.trimAndUppercase(): String {
+    return this.trim().uppercase()
+}
+```
+
+<br/>
+
+### Infix Functions
+
+Infix functions can be member functions or extension functions. They must have single parameter and have prefixed
+with `infix` keyword.
+
+> All `infix` functions are extension functions.
+
+```kotlin
+fun main(args: Array<String>) {
+    val add = 50 add 18
+    println(add)
+}
+
+infix fun Int.add(value: Int): Int {
+    return this + value
+}
+```
+
+In the above example, infix function improves readability. Basically, in infix function, we do not need to use `.`
+and `()` instead we can write it as plain english.
+
+Kotlin standard library contains some infix functions like `for(i in 1..10)` etc.
+
+<br/>
+
+### Recursion
+
+When a function calls itself then it is called recursion.
+
+```kotlin
+fun main(args: Array<String>) {
+    printSomething()
+}
+
+fun printSomething() {
+    println("hello")
+    printSomething() // calling same function recursively
+}
+```
+
+The above example will throw `StackOverflowError`. To avoid that error, kotlin has `tailrec` functions which calls
+recursive functions optimized way.
+
+<br/>
+
+### `tailrec` function
+
+`tailrec` functions are used to call recursive functions in optimized way and avoid `StackOverflowError`.
+
+```kotlin
+fun main(args: Array<String>) {
+    printSomething()
+}
+
+tailrec fun printSomething() { // this is tailrec function
+    println("hello")
+    printSomething() // calling same function recursively
+}
+```
+
+In the above example, `printSomething()` functions call itself infinite time without throwing `StackOverflowError`.
+
+<br/>
+
+### Class
+
+We can define class in kotlin following ways:
+
+```kotlin
+class User {
+    // ...
+}
+```
+
+<br/>
+
+### Primary Constructors
+
+In kotlin, we can declare primary constructor in following ways
+
+```kotlin
+class User(name: String) { // this is primary constructor
+}
+
+// OR
+
+class User constructor(name: String) { // this is primary constructor
+}
+```
+
+#### Declaring property inside constructor
+
+Using `var` or `val` we can declare property while initializing constructor as follows:
+
+```kotlin
+// we do not need to assign name property which we assign in java constructor
+class User constructor(val name: String) { // this is primary constructor
+}
+```
+
+#### `init` block
+
+`init` block get executed when we create instance of the class. `init` block can be used to assign or execute some code
+at the time of object initialization.
+
+```kotlin
+class User constructor(val name: String) { // this is primary constructor
+
+    init {
+        // this block will execute when we create User object
+        println("init block executed")
+    }
+}
+```
+
+> `init` block is always part of primary constructor.
+
+<br/>
+
+### Secondary Constructors
+
+In kotlin, primary constructor dont have its body instead we have init block. But secondary constructors has its own
+body.
+
+```kotlin
+class User constructor(val name: String) { // this is primary constructor
+
+    constructor(name: String, age: Int) : this(name) {
+        // body of the constructor
+    }
+}
+```
+
+We cannot use `var` or `val` while declaring fields in secondary constructors, we have to initialize these variables
+explicitly.
+
+```kotlin
+class User constructor(val name: String) { // this is primary constructor
+
+    // secondary constructor
+    constructor(name: String, age: Int) : this(name) { // must call primary or another secondary constructor
+        // body of the constructor
+    }
+
+    // another secondary constructor
+    constructor(name: String, age: Int, address: String) : this(
+        name,
+        age
+    ) { // must call primary or another secondary constructor
+
+    }
+}
+```
+
+> When we declare secondary constructor, it is mandatory to call primary or another secondary constructor.
+
+#### Declaring properties in secondary constructor
+
+```kotlin
+class User constructor(val name: String) { // this is primary constructor
+
+    var age: Int = 0
+
+    // secondary constructor
+    constructor(name: String, age: Int) : this(name) { // must call primary or another secondary constructor
+        // body of the constructor
+        this.age = age
+    }
+}
+```
+
+In the above example, for we are calling primary constructor with the property `name` which will automatically assigned
+because use of `val` keyword. But we need to explicitly assign `age` property.
