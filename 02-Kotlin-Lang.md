@@ -640,3 +640,208 @@ class User constructor(val name: String) { // this is primary constructor
 
 In the above example, for we are calling primary constructor with the property `name` which will automatically assigned
 because use of `val` keyword. But we need to explicitly assign `age` property.
+
+<br/>
+
+### Inheritance
+
+By default, in kotlin all classes are `public` and `final` in nature. That's why we can't directly inherit from a class.
+
+For inheritance kotlin has provided keyword `open`.
+
+```kotlin
+fun main(args: Array<String>) {
+    val cat = Cat("White", 12)
+    cat.meow()
+    cat.eat() // will call Animal class method
+
+    val dog = Dog("White", "Labra")
+    dog.bark()
+    dog.eat() // will call Animal class method
+}
+
+open class Animal(val color: String) { // to enable inheritance we must declare class as open
+
+    fun eat() { // to enable method overriding we must declare method as open
+        println("Animal eating")
+    }
+}
+
+class Dog(color: String, val breed: String) : Animal(color) {
+
+    fun bark() {
+        println("Dog barking")
+    }
+}
+
+class Cat(color: String, val age: Int) : Animal(color) {
+
+    fun meow() {
+        println("Cat meowing")
+    }
+}
+```
+
+<br/>
+
+### Method Overriding
+
+In kotlin, by default every function is final. To enable overriding, we need to mark method as `open`.
+
+```kotlin
+open class Animal(val color: String) {
+
+    open fun eat() {
+        println("Animal eating")
+    }
+}
+
+class Cat(color: String, val age: Int) : Animal(color) {
+
+    fun meow() {
+        println("Cat meowing")
+    }
+
+    override fun eat() { // overridden method from parent class
+        super.eat() // this will call Animal class eat() method
+        println("Cat eating")
+    }
+}
+```
+
+<br/>
+
+### Primary Constructor Inheritance
+
+```kotlin
+open class Animal(val color: String)
+
+class Cat(color: String, val age: Int) : Animal(color) // calling primary constructor of parent class
+```
+
+<br/>
+
+### Secondary Constructor Inheritance
+
+To call secondary constructor of parent class from the secondary constructor of current class, we need to use `super`
+keyword.
+
+```kotlin
+fun main(args: Array<String>) {
+    val cat = Cat("White", 12)
+    println(cat.color)
+    println(cat.age)
+}
+
+open class Animal {
+    var color: String = ""
+
+    constructor(color: String) {
+        this.color = color
+    }
+}
+
+class Cat : Animal {
+    var age: Int = 0
+
+    constructor(color: String, age: Int) : super(color) { // calling secondary constructor of parent class
+        this.age = age
+    }
+}
+```
+
+<br/>
+
+### Access Modifiers
+
+In kotlin, everything public by default.
+
+#### Top Level Modifiers
+
+Functions, properties, classes, objects, and interfaces can be declared at the "top-level" directly inside a package:
+
+* If you don’t use a visibility modifier, `public` is used by default, which means that your declarations will be
+  visible everywhere.
+
+* If you mark a declaration as `private`, it will only be visible inside the file that contains the declaration.
+
+* If you mark it as `internal`, it will be visible everywhere in the same module.
+
+* The `protected` modifier is not available for top-level declarations.
+
+```kotlin
+// file name: example.kt
+package foo
+
+private fun foo() {
+    ...
+} // visible inside example.kt
+
+var bar: Int = 5 // property is visible everywhere
+    private set         // setter is visible only in example.kt
+
+internal val baz = 6    // visible inside the same module
+```
+
+#### Class Level Modifiers
+
+For members declared inside a class:
+
+* `private` means that the member is visible inside this class only (including all its members).
+
+* `protected` means that the member has the same visibility as one marked as `private`, but that it is also visible in
+  subclasses.
+
+* `internal` means that any client inside this module who sees the declaring class sees its `internal` members.
+
+* `public` means that any client who sees the declaring class sees its `public` members.
+
+> In Kotlin, an outer class does not see private members of its inner classes.
+
+```kotlin
+open class Outer {
+    private val a = 1
+    protected open val b = 2
+    internal open val c = 3
+    val d = 4  // public by default
+
+    protected class Nested {
+        val e: Int = 5
+    }
+}
+
+class Subclass : Outer() {
+    // a is not visible
+    // b, c and d are visible
+    // Nested and e are visible
+
+    override val b = 5   // 'b' is protected
+    override val c = 7   // 'c' is internal
+}
+
+class Unrelated(o: Outer) {
+    // o.a, o.b are not visible
+    // o.c and o.d are visible (same module)
+    // Outer.Nested is not visible, and Nested::e is not visible either
+}
+```
+
+<br/>
+
+### Abstract Classes, functions and Properties
+
+In Kotlin, every abstract class, function and properties `open` by default i.e. they are available to override.
+
+```kotlin
+abstract class Animal { // this class open by default
+    abstract fun eat() // this function is open by default
+}
+
+class Cat : Animal() {
+    override fun eat() {
+        println("eating")
+    }
+}
+```
+
+> We cant create object of abstract class
