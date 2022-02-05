@@ -946,7 +946,7 @@ manipulation, and deletion.
 
 ### Collection Hierarchy
 
-![Collection Hierarchy](images\java-collection-hierarchy.png)
+![Collection Hierarchy](images/java-collection-hierarchy.png)
 
 <br/>
 
@@ -954,6 +954,29 @@ manipulation, and deletion.
 
 The Iterable interface is the root interface for all the collection classes which allows us to iterate over items in
 collections.
+
+<br/>
+
+### Comparable Interface
+
+Comparable interface used to compare tro objects.
+
+```java
+public class User implements Comparable<User> {
+    private final String name;
+
+    public User(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return name.compareTo(user.name);
+    }
+}
+```
+
+<br/>
 
 #### Methods of Iterator interface
 
@@ -1002,6 +1025,16 @@ List<data-type>list1=new Vector();
 ```java
 List<data-type>list1=new Stack();
 ```
+
+<br/>
+
+## Lambda Expressions and Functional Interfaces
+
+### Functional Interface
+
+Functional interface an interface with a single abstract method.
+
+
 
 
 

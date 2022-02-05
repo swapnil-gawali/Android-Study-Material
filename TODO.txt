@@ -31,3 +31,5 @@ comparable interface
 serialization
 singleton pattern
 builder pattern
+
+inline functions

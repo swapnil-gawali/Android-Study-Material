@@ -833,15 +833,278 @@ class Unrelated(o: Outer) {
 In Kotlin, every abstract class, function and properties `open` by default i.e. they are available to override.
 
 ```kotlin
-abstract class Animal { // this class open by default
-    abstract fun eat() // this function is open by default
+abstract class Animal {
+
+    abstract var habit: String
+
+    abstract fun eat()
 }
 
-class Cat : Animal() {
+class Cat(override var habit: String) : Animal() {
     override fun eat() {
         println("eating")
     }
 }
 ```
 
-> We cant create object of abstract class
+> We cannot create object of abstract class
+
+<br/>
+
+### Interfaces
+
+All the functions declared inside interface are `abstract` by default.
+
+```kotlin
+interface OnClickListener {
+    fun onClick()
+}
+
+class Button : OnClickListener {
+    override fun onClick() {
+        println("Button is clicked")
+    }
+}
+```
+
+<br/>
+
+### Data Classes
+
+Data classes generally used for POJO model and they meant to hold data. In case of Data Classes, we do not need to
+override `.equals()`, `hashcode()`, `toString()` methods since default behaviour is already provided to us.
+
+Data classes also provides `copy()` method.
+
+```kotlin
+data class User(val name: String, val age: Int)
+```
+
+#### Data Classes Requirements:
+
+* The primary constructor needs to have at least one parameter.
+
+* All primary constructor parameters need to be marked as val or var.
+
+* Data classes cannot be abstract, open, sealed, or inner.
+
+#### Copying
+
+Use the copy() function to copy an object, allowing you to alter some of its properties while keeping the rest
+unchanged.
+
+```kotlin
+val jack = User(name = "Jack", age = 1)
+val olderJack = jack.copy(age = 2)
+```
+
+In the above example, we are creating object of named `jack`, and later we are copying all the data from the `jack`,
+reassigning `age`storing into another object.
+
+<br/>
+
+### `lateinit`
+
+`lateinit` used to initialized property later instead of initializing at the time of declaring.
+
+```kotlin
+class User {
+    lateinit var name: String // this variable will initialize later
+
+    fun getName() {
+        if (this::name.isInitialized) { // checking if this field is initialized or not
+            println("name is initialized")
+        } else {
+            println("name is not initialized")
+        }
+    }
+}
+```
+
+> `lateinit` only allowed on mutable properties i.e. `var`.
+
+<br/>
+
+### Singleton
+
+Singleton has only one instance per whole application.
+
+### Object Class
+
+When we declare class as `object`, methods and variables declared inside it behaves as a static.
+
+Only one instance of `object` class created at the runtime, hence it is widely used for creating singleton classes.
+
+```kotlin
+fun main(args: Array<String>) {
+    val addition = Calculator.calculate(10, 20)
+    println(addition)
+}
+
+object Calculator {
+    val PI = 3.14
+
+    fun calculate(a: Int, b: Int): Int {
+        return a + b
+    }
+}
+```
+
+#### Points to remember:
+
+* We cannot create instance of `object` class.
+
+* `object` class cannot have constructor.
+
+* `object` class also has parent class and inherit method from it.
+
+<br/>
+
+### Companion Object
+
+Companion Objects are same as `object` but declared within a class. Methods and variables declared inside it behaves
+like static.
+
+```kotlin
+fun main(args: Array<String>) {
+    val fetchData = ApiService.doApiCall()
+}
+
+class ApiService {
+    companion object {
+        val API_URL = "https://google.com" // behaves like static variable
+
+        fun doApiCall() {
+            println("Calling $API_URL")
+        }
+    }
+}
+```
+
+<br/>
+
+### Constants
+
+We can delclare constant variables using `const` keyword.
+
+`const` can only be allowed to declare inside `object` or `companion object`.
+
+```kotlin
+class Calculator {
+    companion object {
+        const val PI = 3.14
+    }
+}
+```
+
+```kotlin
+object Calculator {
+    const val PI = 3.14
+}
+```
+
+<br/>
+
+### Anonymous Inner Class
+
+In Kotlin, we can declare anonymous inner class using `object` keyword.
+
+```kotlin
+interface OnClickListener {
+    fun onClick()
+}
+
+fun main(args: Array<String>) {
+    val onClickListener = object : OnClickListener {
+        override fun onClick() {
+            println("Clicked")
+        }
+    }
+
+    onClickListener.onClick()
+}
+```
+
+<br/>
+
+### Enums
+
+Enums in kotlin is similar to java.
+
+```kotlin
+enum class Colors {
+    Blue,
+    Black,
+    Red,
+    Orange,
+    Green
+}
+```
+
+<br/>
+
+### Sealed Classes
+
+Sealed Classes are used to maintain state.
+
+Class extends sealed classes can have different object states.
+
+```kotlin
+sealed class Result {
+    data class Success(val data: Data) : Result()
+    data class Error(val exception: Exception) : Result()
+}
+
+fun main(args: Array<String>) {
+    val result: Result = Result.Success("Data fetched successfully") // mock data from API
+
+    val message = when (result) {
+        is Result.Error -> result.exception.message
+        is Result.Success -> result.data
+    }
+
+    println(message)
+}
+```
+
+<br/>
+
+### High Order Functions and Lambdas
+
+#### High Order Functions
+
+High Order Functions are the functions which accepts functions as a parameters and can also return a function.
+
+<br/>
+
+### Exception Handling
+
+Kotlin's exception works similarly like Java but Kotlin do not have check exceptions. Every exception ios treated as
+Unchecked or Runtime exception in Kotlin.
+
+```kotlin
+fun main(args: Array<String>) {
+    var str = "100"
+    var number: Int
+
+    try {
+        number = str.toInt()
+    } catch (e: NumberFormatException) {
+        println("Invalid number string")
+    }
+}
+```
+
+#### try as an expression
+
+```kotlin
+fun main(args: Array<String>) {
+    var str = "100"
+
+    var number = try {
+        str.toInt()
+    } catch (e: NumberFormatException) {
+        -1 // if exception, then assign -1 to the number variable
+    }
+}
+```
