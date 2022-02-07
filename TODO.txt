@@ -1,8 +1,4 @@
 <permission> vs <usage-permission>
-
-local broadcast manager
-
-MVVM
 Coroutines and its scopes
 navigation components
 fragments
@@ -33,3 +29,5 @@ singleton pattern
 builder pattern
 
 inline functions
+
+Diffutils
