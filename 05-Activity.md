@@ -522,7 +522,7 @@ Few important points about the context:
 
 1. It is the context of the current state of the application.
 2. It can be used to get information regarding the activity and application.
-3. It can be used to get access to resources, databases, and shared preferences, and etc.
+3. It can be used to get access to resources, databases, shared preferences etc.
 4. Both the Activity and Application classes extend the Context class.
 
 <br/>

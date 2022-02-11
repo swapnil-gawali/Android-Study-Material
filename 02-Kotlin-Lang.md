@@ -985,7 +985,7 @@ class ApiService {
 
 ### Constants
 
-We can delclare constant variables using `const` keyword.
+We can declare constant variables using `const` keyword.
 
 `const` can only be allowed to declare inside `object` or `companion object`.
 
@@ -1104,7 +1104,9 @@ fun main(args: Array<String>) {
     var number = try {
         str.toInt()
     } catch (e: NumberFormatException) {
-        -1 // if exception, then assign -1 to the number variable
+        -1 // if exception, then return -1
     }
+
+    println(number)
 }
 ```

@@ -218,6 +218,186 @@ In the above example, 2 is span count and second param is orientation of Recycle
 
 <br/>
 
+### DiffUtils & AsyncDiffUtils
+
+#### DiffUtils
+
+DiffUtil is a utility class that calculates the difference between two lists. If it found any changes between these two
+lists then it will automatically do the RecyclerView update operations like `notifyDataSetChanged()`
+, `notifyItemInserted()`
+etc.
+
+When we submit a list to adapter, we usually call `notifyDataSetChanged()` or `notifyItemRangeChanged()` which is very
+expensive operation. To optimize performance of the RecyclerView, we generally use DiffUtils or AsyncDiffUtils.
+
+`CountryListAdapter.kt`
+
+```kotlin
+class CountryListAdapter :
+    ListAdapter<Country, CountryListAdapter.MyViewHolder>(DIFF_CALLBACK) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_country_list, parent, false)
+        return MyViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val countryName: TextView = view.findViewById(R.id.tv_country_name)
+
+        fun bind(country: Country) {
+            countryName.text = country.name
+        }
+    }
+
+    companion object {
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<Country> =
+            object : DiffUtil.ItemCallback<Country>() {
+                override fun areItemsTheSame(oldItem: Country, newItem: Country): Boolean {
+                    // this will check whether items inside the object is same or not
+                    return oldItem.name == newItem.name
+                }
+
+                override fun areContentsTheSame(oldItem: Country, newItem: Country): Boolean {
+                    // this will compare object
+                    return oldItem == newItem
+                }
+            }
+    }
+}
+```
+
+`Country.kt`
+
+```kotlin
+data class Country(val name: String)
+```
+
+`MainActivity.kt`
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+
+    private val countryList = listOf(
+        Country("India"),
+        Country("USA"),
+        Country("UK"),
+        Country("Australia"),
+        Country("Germany"),
+        Country("France"),
+        Country("Russia"),
+        Country("Japan"),
+        Country("Italy"),
+        Country("Israel"),
+    )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // get recyclerview
+        val recyclerView: RecyclerView = findViewById(R.id.rv_country_list)
+
+        // create adapter object
+        val countryListAdapter = CountryListAdapter()
+
+        // create layout manager
+        val layoutManager = LinearLayoutManager(this)
+
+        // set orientation to layout manager
+        layoutManager.orientation = RecyclerView.VERTICAL
+
+        // submitting list to adapter
+        countryListAdapter.submitList(countryList)
+
+        // setting layout manager and adapter
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = countryListAdapter
+    }
+}
+```
+
+In the above example, we have created DiffUtil callback `DIFF_CALLBACK` which will be responsible for comparing the old
+and new list and perform updates to the adapter. While using ListAdapter, we do not need to pass our list using the
+class constructor, instead we use `adapter.submitList()` method to pass data to the adapter.
+
+We can access the list item using `getItem(position)`.
+
+> We do not need to override `getItemCount()` method.
+
+<br/>
+
+#### AsyncDiffUtils
+
+AsyncDiffUtils works same as DiffUtils but instead of performing RecyclerView updates on main thread it uses background
+thread. AsyncDiffUtils are best for achieving good performance.
+
+While using AsyncDiffUtils, we do not need to use ListAdapter, instead we can simply use `RecyclerView.Adapter`. Unlike
+ListAdapter, we do not have `submitList()` method, instead we need to create function inside adapter to submit our list.
+
+`CountryListAdapter.kt`
+
+```kotlin
+class CountryListAdapter : RecyclerView.Adapter<CountryListAdapter.MyViewHolder>() {
+
+    private val mDiffer: AsyncListDiffer<Country> = AsyncListDiffer(this, DIFF_CALLBACK)
+
+    fun submitList(list: List<Country>) {
+        mDiffer.submitList(list)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_country_list, parent, false)
+        return MyViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        holder.bind(mDiffer.currentList[position])
+    }
+
+    override fun getItemCount(): Int {
+        return mDiffer.currentList.size
+    }
+
+    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        private val countryName: TextView = view.findViewById(R.id.tv_country_name)
+        fun bind(country: Country) {
+            countryName.text = country.name
+        }
+    }
+
+    companion object {
+        val DIFF_CALLBACK: DiffUtil.ItemCallback<Country> =
+            object : DiffUtil.ItemCallback<Country>() {
+                override fun areItemsTheSame(oldItem: Country, newItem: Country): Boolean {
+                    // this will check whether items inside the object is same or not
+                    return oldItem.name == newItem.name
+                }
+
+                override fun areContentsTheSame(oldItem: Country, newItem: Country): Boolean {
+                    // this will compare object
+                    return oldItem == newItem
+                }
+            }
+    }
+}
+```
+
+In the above example, there is no change in the `MainActivity` implementation.
+
+We have created `AsyncListDiffer` object where we are passing our `DIFF_CALLBACK` implementation of DiffUtils.
+
+We can access or submit list using the `mDiffer` object reference for e.g. `mDiffer.submitList(list)`
+, `mDiffer.currentList[position]` etc.
+
+<br/>
+
 ### Paging 2 - PagedListAdapter
 
 When we use `RecyclerView.Adapter`, it loads all the data at once. Loading all the data once can affect application

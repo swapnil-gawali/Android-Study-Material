@@ -21,7 +21,7 @@ android permissions
 
 anonymous classes
 
-threads, looper, handler, asynctask
+threads, looper, handler, asynctask, runnable
 
 comparable interface
 serialization
@@ -31,3 +31,7 @@ builder pattern
 inline functions
 
 Diffutils
+
+inner vs internal class kotlin
+
+java enum
