@@ -19,8 +19,6 @@ animations
 image processing libraries
 android permissions
 
-anonymous classes
-
 threads, looper, handler, asynctask, runnable
 
 comparable interface
@@ -30,8 +28,4 @@ builder pattern
 
 inline functions
 
-Diffutils
-
 inner vs internal class kotlin
-
-java enum

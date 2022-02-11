@@ -1045,9 +1045,8 @@ enum class Colors {
 
 ### Sealed Classes
 
-Sealed Classes are used to maintain state.
-
-Class extends sealed classes can have different object states.
+Sealed classes can hold multiple types of object which cannot be done in enums. Sealed Classes are used to maintain
+state. Class extends sealed classes can have different object states.
 
 ```kotlin
 sealed class Result {
@@ -1074,6 +1073,8 @@ fun main(args: Array<String>) {
 #### High Order Functions
 
 High Order Functions are the functions which accepts functions as a parameters and can also return a function.
+
+// todo
 
 <br/>
 
