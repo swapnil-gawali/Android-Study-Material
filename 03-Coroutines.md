@@ -148,8 +148,8 @@ Scopes are used to define lifetime of the coroutine. This prevents any leaked re
 ### GlobalScope
 
 Coroutines launch within this scope with tied to the lifetime of the application. For e.g., If we use GlobalScope inside
-of MainActivity to execute some code, and later this activity gets destroyed then execution inside this scope will lead
-to memory leaks.
+MainActivity to execute some code, and later this activity gets destroyed then execution inside this scope will lead to
+memory leaks.
 
 We should never use this scope.
 
@@ -159,39 +159,32 @@ Using this scope we can manage the lifecycle of the coroutine. Coroutines or sus
 block is executed in sequential manner by asynchronously without blocking thread.
 
 ```kotlin
-class MainActivity : AppCompatActivity() {
-
-    private val TAG = MainActivity::class.java.simpleName
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        lifecycleScope.launch {
-            doWork()
-            Log.wtf(TAG, "Coroutine returns")
-        }
-    }
-
-    private suspend fun doWork() = coroutineScope {
-        doDatabaseWork()
-        doAPICall()
-        Log.wtf(TAG, "all work done")
-    }
-
-    private suspend fun doDatabaseWork() {
-        delay(1000)
-        Log.wtf(TAG, "inserting data into db")
-    }
-
-    private suspend fun doAPICall() {
-        delay(2000)
-        Log.wtf(TAG, "fetching data from server")
+fun main(args: Array<String>) {
+    runBlocking {
+        doWork()
+        println("Coroutine returns")
     }
 }
+
+suspend fun doWork() = coroutineScope {
+    doDatabaseWork()
+    doAPICall()
+    println("all work done")
+}
+
+suspend fun doDatabaseWork() {
+    delay(1000)
+    println("inserting data into db")
+}
+
+suspend fun doAPICall() {
+    delay(2000)
+    println("fetching data from server")
+}
+
 ```
 
 In the above example, `doWork()` method executes its code inside coroutineScope. Once `doDatabaseWork()`
-and `doAPICall()`suspend functions finishes their execution, `doWork()` method will return. So it is basically similar to
-the `lifecycleScope`, `viewModelScope` in android.
+and `doAPICall()`suspend functions finishes their execution, `doWork()` method will return. So it is basically similar
+to the `lifecycleScope`, `viewModelScope` in android.
 
