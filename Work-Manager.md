@@ -164,3 +164,42 @@ WorkManager.getInstance(myContext).getWorkInfoByIdLiveData(uploadWorkRequest.id)
         }
     })
 ```
+
+<br/>
+
+### Unique Work
+
+Unique Work guarantees that you only have one instance of work with a particular name at a time.
+
+**Usage:**
+
+* `WorkManager.enqueueUniqueWork()` for one time work
+* `WorkManager.enqueueUniquePeriodicWork()` for periodic work
+
+```kotlin
+WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+    "sendLogs",
+    ExistingPeriodicWorkPolicy.KEEP,
+    uploadWorkRequest
+)
+```
+
+<br/>
+
+### Cancelling and stopping work
+
+If you no longer need your previously enqueued work to run, you can ask for it to be cancelled. Work can be cancelled by
+its name, id or by a tag associated with it.
+
+```kotlin
+// by id
+workManager.cancelWorkById(syncWorker.id)
+
+// by name
+workManager.cancelUniqueWork("sync")
+
+// by tag
+workManager.cancelAllWorkByTag("syncTag")
+```
+
+Under the hood, WorkManager checks the State of the work. If the work is already finished, nothing happens.
