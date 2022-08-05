@@ -19,7 +19,7 @@ animations
 image processing libraries
 android permissions
 
-threads, looper, handler, asynctask, runnable
+threads, looper, handler, async-task, runnable
 
 comparable interface
 serialization
@@ -29,3 +29,6 @@ builder pattern
 inline functions
 
 inner vs internal class kotlin
+
+difference between async task and thread
+thread pool

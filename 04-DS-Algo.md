@@ -85,6 +85,8 @@ fun fibonacci(num: Int): Int {
 
 <br/>
 
+---
+
 ### Arrays:
 
 Arrays are the simplest data structure which is used to store object which contains elements of a similar data type.
@@ -96,11 +98,24 @@ Arrays use `O(1)` complexity to get its item using index position.
 Array can be defined as following:
 
 ```kotlin
-val numberArray = arrayOf(1, 2, 3, 4, 5)
+val numberArray = arrayOf(1, 2, 3, 4)
+
+// OR
+
+val numberArray = IntArray(4)
+numberArray[0] = 1
+numberArray[1] = 2
+numberArray[2] = 3
+numberArray[3] = 4
 ```
 
 > In Java/Kotlin, if you want dynamic growable array, then you can use `Vector` or `ArrayList`.
 > In case of `Vector`, it grows by 100% when there is new space required for the item. In case
 > of `ArrayList`, it grows by 50% when there is new space required.
 
+#### Runtime complexion for various Arrays methods:
 
+1. Lookup By Index - O(1)
+2. Lookup By Value - O(n)
+3. Insert - O(n)
+4. Delete - O(n)

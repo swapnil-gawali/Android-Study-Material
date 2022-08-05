@@ -74,7 +74,9 @@ default constructor by default.
 
 There are two types of constructors in Java: no-arg constructor, and parameterized constructor.
 
-> Note: It is called constructor because it constructs the values at the time of object creation. It is not necessary to write a constructor for a class. It is because java compiler creates a default constructor if your class doesn't have any.
+> Note: It is called constructor because it constructs the values at the time of object creation. It is not necessary to
+> write a constructor for a class. It is because java compiler creates a default constructor if your class doesn't have
+> any.
 > Constructor name and class name must be same.
 
 ```java
@@ -215,7 +217,8 @@ public class Child extends Parent {
 
 > `public` variables and methods can be accessed from anywhere.
 
-> variables and methods without access modifiers called as `package-private` which can only be accessed within same package.
+> variables and methods without access modifiers called as `package-private` which can only be accessed within same
+> package.
 
 <br/>
 
@@ -853,7 +856,7 @@ public class Main {
 ```
 
 3. **Compile-Time Checking:** It is checked at compile time so problem will not occur at runtime. The good programming
-   strategy says it is far better to handle the problem at compile time than runtime.
+   strategy says it is far better to handle the issue at compile time than runtime.
 
 ```java
 public class Main {
@@ -1011,7 +1014,7 @@ collections.
 
 ### Comparable Interface
 
-Comparable interface used to compare tro objects.
+Comparable interface used to compare two objects.
 
 ```java
 public class User implements Comparable<User> {
@@ -1095,7 +1098,8 @@ public interface OnClickListener {
 }
 ```
 
-> If any interface with one abstract method extends another functional interface then it will not fall under the category of
+> If any interface with one abstract method extends another functional interface then it will not fall under the
+> category of
 > functional interface.
 
 <br/>
@@ -1160,244 +1164,3 @@ public class Main {
     }
 }
 ```
-
-<br/>
-
-## Process, Threads & MultiThreading
-
-### Process
-
-Process is a stance of a programme or application. When we launch an application, operating system create process and
-launch that application into that process.
-
-<br/>
-
-### MultiThreading
-
-Multithreading is a process of executing multiple threads simultaneously. A thread is a lightweight sub-process, the
-smallest unit of processing. Multiprocessing and MultiThreading, both are used to achieve multitasking.
-
-> In simple words, if application is using multiple threads is called as MultiThreaded application.
-
-MultiThreading takes advantages of multiple cores available in our CPU. If application is not using threads then it is
-basically using single core of the machine.
-
-### Thread
-
-Thread is a lightweight sub-process. Practically, thread is responsible for executing our code which called as
-MainThread where we can create multiple thread to execute tasks concurrently.
-
-<br/>
-
-#### Runnable Interface
-
-Java runnable is an interface used to execute code on a concurrent thread. It is an interface which is implemented by
-any class if we want that the instances of that class should be executed by a thread.
-
-The runnable interface has an undefined method run() with void as return type, and it takes in no arguments. The method
-summary of the `run()` method.
-
-> In simple words, any class that implements `Runnable` interface runs on a different thread.
-
-<br/>
-
-#### Creating and Starting Thread
-
-For creating a Thread, we need to create object of it and pass a class which implements `Runnable` interface.
-
-We can start thread using `thread.start()` method.
-
-```java
-public class ExampleThread implements Runnable {
-    @Override
-    public void run() {
-        System.out.println(Thread.currentThread().getName());
-        System.out.println("Executing task on thread");
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        // creating thread
-        Thread thread = new Thread(new ExampleThread());
-        // starting thread
-        thread.start();
-    }
-}
-```
-
-```text
-// output
-Thread-0
-Executing task on thread
-```
-
-> We can check on which thread out task is running using `Thread.currentThread().getName()`
-
-<br/>
-
-#### Pausing a Thread
-
-We can pause execution of the Thread using `Thread.sleep(timeInMillis)` method.
-
-```java
-public class ExampleThread implements Runnable {
-    @Override
-    public void run() {
-        try {
-            Thread.sleep(5000); // pausing execution for 5 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Task finished.");
-    }
-}
-```
-
-<br/>
-
-#### Joining Threads
-
-Let's say we have to execute a task on Thread or Main Thread but after finishing of another Thread.
-
-For e.g., we are downloading file from server using thread, after download complete we want to perform read/write
-operation on that file on another background thread.
-
-```java
-public class DownloadFileThread implements Runnable {
-    @Override
-    public void run() {
-        try {
-            Thread.sleep(5000); // waiting for 5 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("File download finished.");
-    }
-}
-
-public class ReadFileThread implements Runnable {
-    @Override
-    public void run() {
-        System.out.println("File read successfully.");
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Thread downloadFileThread = new Thread(new DownloadFileThread());
-        downloadFileThread.start();
-
-        try {
-            downloadFileThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Thread readFileThread = new Thread(new ReadFileThread());
-        readFileThread.start();
-    }
-}
-```
-
-In the above example, ReadFileThread will wait until DownloadFileThread execution finishes.
-
-<br/>
-
-#### Interrupting a Thread
-
-We can interrupt a thread when we want to cancel an operation using `Thread.interrupt()` method.
-
-For e.g., lets say downloading a file taking a very long time, and we want to cancel that operation then we can
-interrupt that download file thread.
-
-```java
-public class DownloadFileThread implements Runnable {
-    @Override
-    public void run() {
-        System.out.println("File download started");
-
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            // check if current thread is interrupted
-            // if interrupted then exit from the for loop
-            if (Thread.currentThread().isInterrupted()) {
-                return;
-            }
-
-            System.out.println("Downloading byte : " + i); // simulating fake download operation
-        }
-
-        System.out.println("File download finished.");
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Thread downloadFileThread = new Thread(new DownloadFileThread());
-        downloadFileThread.start();
-
-        try {
-            Thread.sleep(1000); // sleeping main thread for 1 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // interrupting a thread
-        downloadFileThread.interrupt();
-    }
-}
-```
-
-<br/>
-
-#### Concurrency Issues & `synchronized` keyword
-
-When multiple threads try to access or update object it causes concurrency issue and application may crash or behave
-abnormally. This is also called as **Race Condition** i.e. multiple threads are competing or racing to modify the data.
-To avoid this, we use `synchronized` keyword.
-
-> Java Synchronization is better option where we want to allow only one thread to access the shared resource.
-
-
-When we use `synchronized` keyword, it automatically acquires the lock for that object and releases it when the thread
-completes its task.
-
-#### `synchronized` method
-
-```java
-public class Main {
-    int counter = 0;
-
-    synchronized void incrementObject() {
-        System.out.println(counter);
-        counter++;
-    }
-}
-```
-
-#### `synchronized` block
-
-```java
-public class Main {
-    int counter = 0;
-
-    void incrementObject() {
-        synchronized (this) {
-            System.out.println(counter);
-            counter++;
-        }
-    }
-}
-```
-
-<br/>
-
-#### `volatile` keyword
-
-For performance point of view, jvm caches an object and stored them inside a cpu and changes made to the cached object
-are only local to the cpu, and not visible to the other thread. When we mark an object as a `volatile` keyword, it does
-not cache that object.
-
-When a thread changes a data, another thread cannot see those changes, and it is called visibility issue. `volatile`
-keyword make sure the changed data is visible to the another thread. It does not prevent race condition, but only
-prevent visibility issue.

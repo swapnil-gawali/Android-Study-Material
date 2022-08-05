@@ -8,7 +8,7 @@ instance of the `Engine` class to run.
 
 Implementing dependency injection provides you with the following advantages:
 
-1. Reusability of code
+1. Re-usability of code
 2. Ease of refactoring
 3. Ease of testing
 

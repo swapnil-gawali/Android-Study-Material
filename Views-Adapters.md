@@ -174,7 +174,8 @@ type parameter.
 
 `getItemViewType()`
 
-Using this method we can define multiple item layout and set to the RecyclerView based on the position.
+Using this method we can define multiple item layout and set to the RecyclerView based on the position, for e.g. headers
+& footers.
 
 ### Layout Managers:
 
@@ -612,7 +613,7 @@ class PagerFragment(private val page: Page) : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return inflater.inflate(R.layout.fragment_page, container, false)
     }
 
