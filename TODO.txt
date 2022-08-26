@@ -32,3 +32,10 @@ inner vs internal class kotlin
 
 difference between async task and thread
 thread pool
+
+fragment backpress
+dialog fragment
+
+content providers
+
+weak reference

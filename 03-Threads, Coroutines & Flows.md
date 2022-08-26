@@ -236,6 +236,8 @@ When a thread changes a data, another thread cannot see those changes, and it is
 keyword make sure the changed data is visible to the another thread. It does not prevent race condition, but only
 prevent visibility issue.
 
+---
+
 # Coroutines
 
 Coroutine allows us to write non-blocking asynchronous kotlin code without blocking main thread.
@@ -362,7 +364,6 @@ job.cance()
 ```
 
 This will cancel any running coroutines job.
-
 <br/>
 
 ### Timeout
