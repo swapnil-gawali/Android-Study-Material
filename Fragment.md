@@ -236,3 +236,164 @@ supportFragmentManager.commit {
     show(fragment)
 }
 ```
+
+<br/>
+
+### Fragment Lifecycle
+
+![Android Activity Lifecycle](images/fragment-view-lifecycle.png)
+
+### `onCreate()`
+
+Initialize essential components and variables of the Fragment in this callback. The system calls this method when the
+Fragment is created. Anything initialized in `onCreate()` is preserved if the Fragment is paused and resumed.
+
+### `onCreateView()`
+
+Inflate the XML layout for the Fragment in this callback. The system calls this method to draw the Fragment UI for the
+first time. As a result, the Fragment is visible in the Activity. To draw a UI for your Fragment, you must return the
+root `View` of your Fragment layout. Return `null` if the Fragment does not have a UI.
+
+In simple words, this method renders UI.
+
+### `onViewCreated()`
+
+This method calls when fragment finishes UI creation. It is good place to initialize views like button, register
+broadcast receiver etc.
+
+### `onViewStateRestored()`
+
+This method used to restore state of the fragment.
+
+### `onStart()`
+
+The system invokes this method to make the fragment visible on the user’s device.
+
+### `onResume()`
+
+This method is called to make the visible fragment interactive. i.e. User can interact with UI like Button, EditText
+etc.
+
+### `onPause()`
+
+It indicates that the user is leaving the fragment. System call this method to commit the changes made to the fragment.
+
+### `onStop()`
+
+Method to terminate the functioning and visibility of fragment from the user’s screen.
+
+### `onDestroyView()`
+
+This call can occur if the host Activity has stopped, or the Activity has removed the Fragment.
+
+### `onDestroy()`
+
+It is called to perform the final clean up of fragment’s state and its lifecycle.
+
+<br/>
+
+### Fragment Lifecycle Associate with Activity Lifecycle
+
+| Activity    | Fragment                                                             |
+|-------------|----------------------------------------------------------------------|
+| onCreate()  | onAttach()<br/>onCreate()<br/>onCreateView()<br/>onActivityCreated() |
+| onStart()   | onStart()                                                            |
+| onResume()  | onResume()                                                           |
+| onPause()   | onPause()                                                            |
+| onStop()    | onStop()                                                             |
+| onDestroy() | onDestroyView()<br/>onDestroy()<br/>onDetach()                       |
+
+> Note: While construction, Activity lifecycle gets called first. In destruction, fragment methods gets called first.
+
+#### When User Rotates screen:
+
+| Activity    | Fragment                                                             |
+|-------------|----------------------------------------------------------------------|
+| onPause()   | onPause()                                                            |
+| onStop()    | onStop()                                                             |
+| onDestroy() | onDestroyView()<br/>onDestroy()<br/>onDetach()                       |
+| onCreate()  | onAttach()<br/>onCreate()<br/>onCreateView()<br/>onActivityCreated() |
+| onStart()   | onStart()                                                            |
+| onResume()  | onResume()                                                           |
+
+#### When User Press Home Button:
+
+| Activity   | Fragment   |
+|------------|------------|
+| onResume() | onResume() |
+| onStop()   | onStop()   |
+
+#### When User Resume App from Home:
+
+| Activity   | Fragment   |
+|------------|------------|
+| onStart()  | onStart()  |
+| onResume() | onResume() |
+
+> Note: When popup appears before fragment, NO lifecycle method gets called.
+
+<br/>
+
+### Fragment Communication
+
+#### Fragment to Fragment communication:
+
+There are two ways to perform fragment to fragment communication
+
+1. Using shared `ViewModel`
+2. Fragment Result API
+
+<br/>
+
+##### 1. Using Shared `ViewModel`
+
+In this case host activity has ViewModel and in this ViewModel contains LiveData which can be observed in child
+fragments.
+
+##### 2. Using Fragment Result API
+
+```kotlin
+// sending data
+setFragmentResult("requestKey", bundleOf("bundleKey" to result))
+```
+
+```kotlin
+// receiving data
+setFragmentResultListener("requestKey") { requestKey, bundle ->
+    // We use a String here, but any type that can be put in a Bundle is supported
+    val result = bundle.getString("bundleKey")
+    // Do something with the result
+}
+```
+
+<br>
+
+### Fragment Back Press Listener
+
+We can intercept back press using `onBackPressedDispatcher` callbacks.
+
+```kotlin
+requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), object : OnBackPressedCallback(false) {
+    override fun handleOnBackPressed() {
+        // do some logic on back press
+
+        if (gotoBackScreen) {
+            isEnabled = false
+            requireActivity().onBackPressed()
+        }
+    }
+})
+```
+
+<br/>
+
+### `getContext()`, `requireContext()`, `getActivity()`, `requireActivity()`
+
+`getContext()` and `getActivity()` returns nullable activity or context if activity and our app will crash.
+
+But, with `requireContext()` and `requireActivity()` always returns non-null activity or context or
+throws `IllegalStateException` if activity is null.
+
+<br>
+
+### Fragment Backstack

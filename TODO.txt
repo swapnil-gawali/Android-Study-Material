@@ -39,3 +39,5 @@ dialog fragment
 content providers
 
 weak reference
+
+setreordering, fragment factory
