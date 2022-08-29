@@ -412,7 +412,7 @@ FragmentB and lastly FragmentC. So the activity is currently showing FragmentC.
 
 While Adding these fragments we have added these transactions into the back stack using TAG.
 
-So if my requirement is to go from FragmentC to FragmentA, so i can simply call popBackStack("AddFragA", 0) and it will
+So if my requirement is to go from FragmentC to FragmentA, so I can simply call popBackStack("AddFragA", 0) and it will
 remove all fragments till FragmentA and FragmentA will be visible to screen.
 
 <br/>
@@ -508,7 +508,7 @@ PurchaseConfirmationDialogFragment().show(
 
 #### DialogFragment lifecycle
 
-A DialogFragment follows the standard fragment lifecycle. In addition DialogFragment has a few additional lifecycle
+A DialogFragment follows the standard fragment lifecycle. In addition, DialogFragment has a few additional lifecycle
 callbacks. The most common ones are as follows:
 
 `onCreateDialog()` - Override this callback to provide a Dialog for the fragment to manage and display.
