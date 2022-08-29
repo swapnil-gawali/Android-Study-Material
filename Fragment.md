@@ -543,3 +543,40 @@ need to override `onCreateDialog()`, as the default empty dialog is populated wi
 
 Certain subclasses of `DialogFragment`, such as `BottomSheetDialogFragment`, embed your view in a dialog that is styled
 as a bottom sheet.
+
+<br/>
+
+### Fragment Factory
+
+Traditionally, a Fragment instance could only be instantiated using its default empty constructor. This is because the
+system would need to reinitialize it under certain circumstances like configuration changes and the app’s process
+recreation. If it were not for the default constructor restriction, the system would not know how to reinitialize the
+Fragment instance.
+
+FragmentFactory was created to work around this limitation. It helps the system create a Fragment instance by providing
+it with the necessary arguments/dependencies needed to instantiate the Fragment.
+
+> In simple words, Fragment Factory used to provide dependencies to the fragments at the time of instantiation.
+
+```kotlin
+class CustomFragmentFactory(private val dependency: Dependency) : FragmentFactory() {
+    override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+        if (className == CustomFragment::class.java.name) {
+            return CustomFragment(dependency)
+        }
+        return super.instantiate(classLoader, className)
+    }
+}
+```
+
+```kotlin
+class HostActivity : AppCompatActivity() {
+    private val customFragmentFactory = CustomFragmentFactory(Dependency())
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        supportFragmentManager.fragmentFactory = customFragmentFactory
+        super.onCreate(savedInstanceState)
+        // ...
+    }
+}
+```

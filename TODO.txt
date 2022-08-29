@@ -40,6 +40,7 @@ content providers
 
 weak reference
 
-setreordering, fragment factory
-
 paging 2
+
+arraylist, linkedlists, sets, hashmap in details
+hashmap loops
