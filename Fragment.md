@@ -397,3 +397,149 @@ throws `IllegalStateException` if activity is null.
 <br>
 
 ### Fragment Backstack
+
+Fragment Backstack manages back navigation.
+
+<br/>
+
+#### `addToBackStack("TAG")`
+
+We can add fragment transaction in the backstack using TAG. This tag will be useful when we remove the transaction from
+backstack using `popBackStack()` method.
+
+For e.g. Our Activity contains three Fragments, FragmentA, FragmentB, FragmentC. First We added FragmentA, later
+FragmentB and lastly FragmentC. So the activity is currently showing FragmentC.
+
+While Adding these fragments we have added these transactions into the back stack using TAG.
+
+So if my requirement is to go from FragmentC to FragmentA, so i can simply call popBackStack("AddFragA", 0) and it will
+remove all fragments till FragmentA and FragmentA will be visible to screen.
+
+<br/>
+
+#### `addToBAckStack(null)`
+
+If we do not specify TAG then we can't remove fragment using TAG. i.e. if we want to navigate from FragmentC to
+FragmentA then we need to call multiple `popBackStack()` method till we reach to FragmentA.
+
+<br/>
+
+#### `popBackStack()`
+
+It simply removes fragment current fragment from the transaction.
+
+We can also provide flags while removing backstack entries.
+
+1. 0 - It will remove all the transactions till the supplied tag.
+2. POP_BACK_STACK_INCLUSIVE - It will remove all the transaction till the supplied tag along with provided tag. i.e. if
+   we call `popBackStack("AddFragB", POP_BACK_STACK_INCLUSIVE)` then it will remove all the transactions till FragmentB
+   and FragmentB will also get pop from that transaction.
+
+<br/>
+
+### `setReorderingAllowed(true)`
+
+It optimizes the state changes of the fragments involved in the transaction so that animations and transitions work
+correctly.
+
+<br/>
+
+### Setting Custom Animation
+
+We can create our custom animations and put them into the `res/anim` folder.
+
+```kotlin
+val fragment = FragmentB()
+supportFragmentManager.commit {
+    setCustomAnimations(
+        enter = R.anim.slide_in,
+        exit = R.anim.fade_out,
+        popEnter = R.anim.fade_in,
+        popExit = R.anim.slide_out
+    )
+    replace(R.id.fragment_container, fragment)
+    addToBackStack(null)
+}
+```
+
+<br/>
+
+### Displaying dialogs with DialogFragment
+
+A `DialogFragment` is a special fragment subclass that is designed for creating and hosting dialogs. Strictly speaking,
+you do not need to host your dialog within a fragment, but doing so allows the `FragmentManager` to manage the state of
+the dialog and automatically restore the dialog when a configuration change occurs.
+
+<br/>
+
+#### Create a DialogFragment
+
+To create a `DialogFragment`, first create a class that extends `DialogFragment`, and override `onCreateDialog()`, as
+shown in
+the following example.
+
+```kotlin
+class PurchaseConfirmationDialogFragment : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        AlertDialog.Builder(requireContext())
+            .setMessage(getString(R.string.order_confirmation))
+            .setPositiveButton(getString(R.string.ok)) { _, _ -> }
+            .create()
+
+    companion object {
+        const val TAG = "PurchaseConfirmationDialog"
+    }
+}
+```
+
+<br/>
+
+#### Showing the DialogFragment
+
+```kotlin
+// From another Fragment or Activity where you wish to show this
+// PurchaseConfirmationDialogFragment.
+PurchaseConfirmationDialogFragment().show(
+    childFragmentManager, PurchaseConfirmationDialog.TAG
+)
+```
+
+<br/>
+
+#### DialogFragment lifecycle
+
+A DialogFragment follows the standard fragment lifecycle. In addition DialogFragment has a few additional lifecycle
+callbacks. The most common ones are as follows:
+
+`onCreateDialog()` - Override this callback to provide a Dialog for the fragment to manage and display.
+
+`onDismiss()` - Override this callback if you need to perform any custom logic when your Dialog is dismissed, such as
+releasing resources, unsubscribing from observable resources, and so on.
+
+`onCancel()` - Override this callback if you need to perform any custom logic when your Dialog is cancelled.
+DialogFragment also contains methods to dismiss or set the cancellability of your DialogFragment:
+
+`dismiss()` - Dismiss the fragment and its dialog. If the fragment was added to the back stack, all back stack state up
+to and including this entry are popped. Otherwise, a new transaction is committed to remove the fragment.
+
+`setCancellable()` - Control whether the shown Dialog is cancelable. This method should be used instead of directly
+calling Dialog.setCancelable(boolean).
+
+> Notice that you do not override `onCreateView()` or `onViewCreated()` when using a DialogFragment with a Dialog.
+> Dialogs are
+> not only views—they have their own window. As such, it is insufficient to override `onCreateView()`. Moreover,
+`onViewCreated()` is never called on a custom `DialogFragment` unless you've overridden `onCreateView()` and provided a
+> non-null view.
+
+<br/>
+
+#### Using custom views
+
+You can create a `DialogFragment` and display a dialog by overriding `onCreateView()`, either giving it a layoutId as
+you would with a typical fragment or using the `DialogFragment` constructor.
+
+The View returned by `onCreateView()` is automatically added to the dialog. In most cases, this means that you don't
+need to override `onCreateDialog()`, as the default empty dialog is populated with your view.
+
+Certain subclasses of `DialogFragment`, such as `BottomSheetDialogFragment`, embed your view in a dialog that is styled
+as a bottom sheet.

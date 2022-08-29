@@ -41,3 +41,5 @@ content providers
 weak reference
 
 setreordering, fragment factory
+
+paging 2
