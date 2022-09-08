@@ -316,8 +316,8 @@ public class Main {
     }
 
     private static void printHashCode(Parent parent) { // this is Upcasting
-        if (parent instanceof Child) {
-            Child child = (Child) parent; // this is Downcasting
+        if (parent instanceof Child child) {
+            // this is Downcasting
         }
     }
 }
@@ -1014,7 +1014,8 @@ collections.
 
 ### Comparable Interface
 
-Comparable interface used to compare two objects.
+The Comparable interface is used to compare an object of the same class with an instance of that class. For that we need
+to implement `Comparable<T>` interface and specify object type to it.
 
 ```java
 public class User implements Comparable<User> {
@@ -1164,3 +1165,14 @@ public class Main {
     }
 }
 ```
+
+<br/>
+
+## Serialization & Deserialization
+
+Serialization is the process of converting state of the object into byte-stream.
+
+In other Hand, Deserialization is the process of converting byte-stream into object.
+
+Serialization and deserialization is used to send object data using API, send data from one fragment to another.
+

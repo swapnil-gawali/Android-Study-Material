@@ -1,7 +1,6 @@
 <permission> vs <usage-permission>
 Coroutines and its scopes
 navigation components
-fragments
 flow
 paging
 
@@ -22,9 +21,12 @@ android permissions
 threads, looper, handler, async-task, runnable
 
 comparable interface
-serialization
+serialization, serializable interface, serializable vs parcellable
 singleton pattern
 builder pattern
+Collections class
+
+marker interface
 
 inline functions
 
@@ -32,9 +34,6 @@ inner vs internal class kotlin
 
 difference between async task and thread
 thread pool
-
-fragment backpress
-dialog fragment
 
 content providers
 
