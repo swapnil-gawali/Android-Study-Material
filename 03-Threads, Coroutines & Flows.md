@@ -312,6 +312,8 @@ runBlocking {
 }
 ```
 
+> `runBlocking {}` can also be calling from main thread.
+
 <br/>
 
 ### `delay()` function
@@ -464,5 +466,81 @@ Dispatcher determines which thread coroutine is run on.
 - Main - Runs on the Main thread of the application
 - IO - Used for network call, file read/write, DB operations etc. and uses expandable thread pool
 - Other - Custom dispatchers
+
+The difference is that Dispatchers.Default is limited to the number of CPU cores (with a minimum of 2) so only N (where
+N == cpu cores) tasks can run in parallel in this dispatcher.
+
+On the IO dispatcher there are by default 64 threads, so there could be up to 64 parallel tasks running on that
+dispatcher.
+
+The idea is that the IO dispatcher spends a lot of time waiting (IO blocked), while the Default dispatcher is intended
+for CPU intensive tasks, where there is little or no sleep.
+
+<br/>
+
+#### Coroutine Context
+
+The context determines on which thread the coroutines will run. There are four options:
+
+1. `Dispatchers.Default` - for CPU intense work (e.g. sorting a big list)
+2. `Dispatchers.Main` - what this will be depending on what you've added to your programs runtime dependencies (e.g.
+   kotlinx-coroutines-android, for the UI thread in Android)
+3. `Dispatchers.Unconfined` - runs coroutines unconfined on no specific thread
+4. `Dispatchers.IO` - for heavy IO work (e.g. long-running database queries)
+
+<br/>
+
+#### `withContext()`
+
+`withContext()` is used to switch context i.e. `withContext()` will switch execution into a different thread and get
+back to the original dispatcher when it completes. This suspending function is cancellable by default, and it will throw
+cancellable exception.
+
+> `withContext()` is `suspend` function and it can only be called with `CoroutineScope`
+
+For e.g. if we're doing database operation inside `CoroutineScope` with `IO` dispatcher, and we need to assign that
+result to the `TextView`. So in this case we can switch context from `IO` to `Main` using `withContext()`.
+
+```kotlin
+lifecycleScope.launch(Dispatchers.IO) {
+    val result = fetchDataFromDatabase() // fetchDataFromDatabase() is suspend function which returns string
+
+    withContext(Dispatchers.Main) {
+        button.text = result
+    }
+}
+```
+
+<br/>
+
+#### Async Await
+
+When we want to call multiple suspend method simultaneously then we can use `async` & `await`. `async` `await` returns
+Deferred object which similar to the promise in javascript.
+
+When we call multiple suspend function inside coroutines, then it basically execute them in sequentially i.e. call first
+suspend function wait for finishing its work and after finishing first task it will execute second suspend function. So
+the async await solves this issue.
+
+```kotlin
+suspend fun fetchTwoDocs() =
+    coroutineScope {
+        val deferredOne = async { fetchDoc(1) }
+        val deferredTwo = async { fetchDoc(2) }
+        deferredOne.await()
+        deferredTwo.await()
+    }
+
+// OR
+
+suspend fun fetchTwoDocs() =        // called on any Dispatcher (any thread, possibly Main)
+    coroutineScope {
+        val deferreds = listOf(     // fetch two docs at the same time
+            async { fetchDoc(1) },  // async returns a result for the first doc
+            async { fetchDoc(2) }   // async returns a result for the second doc
+        )
+        deferreds.awaitAll()        // use awaitAll to wait for both network requests
+    }
+```
 
 

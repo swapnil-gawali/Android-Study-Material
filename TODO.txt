@@ -2,44 +2,50 @@
 Coroutines and its scopes
 navigation components
 flow
-paging
+paging, paging 2
 
 kotlin high order functions like map etc
-kotlin apply, also etc
 
 material design
 
 styles and themes
-layouts (mainly coordinator and constraint)
+constraint layout
 android file system
-retrofit/okhttp interceptors
-dagger hilt
 animations
 image processing libraries
 android permissions
 
-threads, looper, handler, async-task, runnable
+threads, looper, handler, async-task thread pool weak reference
 
-comparable interface
-serialization, serializable interface, serializable vs parcellable
-singleton pattern
 builder pattern
 Collections class
-
-marker interface
 
 inline functions
 
 inner vs internal class kotlin
 
 difference between async task and thread
-thread pool
+
 
 content providers
 
-weak reference
-
-paging 2
-
 arraylist, linkedlists, sets, hashmap in details
 hashmap loops
+
+intents
+
+backing field in kotlin
+
+launch modes
+
+string builders
+
+kotlin filter reduce etc
+
+return type unit
+any class
+
+what is lambda
+
+
+

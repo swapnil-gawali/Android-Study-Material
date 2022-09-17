@@ -512,6 +512,22 @@ public interface MyInterface extends MyBaseInterface {
 
 <br/>
 
+#### Marker Interface
+
+An empty interface is known as marker interface.
+
+Marker interface is used as a tag that inform the Java compiler by a message so that it can add some special behavior to
+the class implementing it.
+
+There are several inbuilt marker interfaces like `Cloneable`, `Serializable`, `Remote`
+<br/>
+
+#### Cloneable Interface
+
+It generates replica (copy) of an object with different name. We can implement the interface in the class of which class
+object to be cloned. It indicates the `clone()` method of the `Object` class.
+</br>
+
 ### Final Classes & Methods
 
 When we declare any class as final, then we cannot extend this class, but we can create object of final class.
@@ -1175,4 +1191,75 @@ Serialization is the process of converting state of the object into byte-stream.
 In other Hand, Deserialization is the process of converting byte-stream into object.
 
 Serialization and deserialization is used to send object data using API, send data from one fragment to another.
+<br/>
 
+### Serializable interface
+
+`Serializable` is a marker interface (has no data member and method). It is used to "mark" Java classes so that the
+objects of these classes may get a certain capability. The `Cloneable` and `Remote` are also marker interfaces.
+
+The `Serializable` interface must be implemented by the class whose object needs to be persisted.
+
+```java
+import java.io.Serializable;
+
+public class Student implements Serializable {
+    int id;
+    String name;
+
+    public Student(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}  
+```
+
+<br/>
+
+### Reflection
+
+Java Reflection is the process of analyzing and modifying all the capabilities of a class at runtime.
+<br/>
+
+### Parcelable
+
+`Parcelable` interface does the same job as `Serializable` interface does, but we need to write custom implementation
+for
+this.
+<br/>
+
+### Parcelable vs Serializable
+
+1. Parcelable is faster than Serializable interface
+2. Parcelable interface takes more time to implement compared to Serializable interface is easier to implement
+3. Serializable interface creates a lot of temporary objects and causes quite a bit of garbage collection
+4. Parcelable array can be passed via Intent in android
+   <br/>
+
+### Java Annotations
+
+Java Annotation is a tag that represents the metadata i.e. attached with class, interface, methods or fields to indicate
+some additional information which can be used by java compiler and JVM.
+
+Annotations in Java are used to provide additional information, so it is an alternative option for XML and Java marker
+interfaces.
+
+#### **Built-In Java Annotations**
+
+1. @Override
+2. @SuppressWarnings
+3. @Deprecated
+4. @Target
+5. @Retention
+6. @Inherited
+7. @Documented
+
+<br/>
+
+#### Types of Annotation
+
+There are three types of annotations:
+
+1. Marker Annotation
+2. Single-Value Annotation
+3. Multi-Value Annotation

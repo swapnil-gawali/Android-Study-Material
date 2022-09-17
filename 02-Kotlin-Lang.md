@@ -197,7 +197,7 @@ getting null values.
 
 ```kotlin
 fun main(args: Array<String>) {
-    val name: String? = "Swapnil Gawali"
+    val name: String = "Swapnil Gawali"
     val address: String? = null
 
     println("This will uppercase name: ${name?.uppercase()}")
@@ -217,7 +217,7 @@ This will execute the block only if value is not null.
 
 ```kotlin
 fun main(args: Array<String>) {
-    val name: String? = "Swapnil Gawali"
+    val name: String = "Swapnil Gawali"
     val address: String? = null
 
     name?.let { str ->
@@ -243,7 +243,7 @@ This will assign the non-null value if the variable is null.
 
 ```kotlin
 fun main(args: Array<String>) {
-    val country: String? = "Nashik"
+    val country: String = "Nashik"
 
     // without elvis operator
     val lengthWithoutElvis = if (country != null) country.length else -1
@@ -261,7 +261,7 @@ You can use it when you are sure the value is not null. it will throw `NullPoint
 
 ```kotlin
 fun main(args: Array<String>) {
-    val name: String? = "Swapnil Gawali"
+    val name: String = "Swapnil Gawali"
     val address: String? = null
 
     println("This will uppercase name: ${name?.uppercase()}")
@@ -921,7 +921,17 @@ class User {
 }
 ```
 
-> `lateinit` only allowed on mutable properties i.e. `var`.
+> `lateinit` only allowed on mutable properties i.e. `var`. If you try to access `lateinit` variable without
+> initializing it then it throws `UnInitializedPropertyAccessException`.
+
+<br/>
+
+### `By lazy {}`
+
+`by lazy {}` lazily initialize value when used first time. It is initialized only once. Next time when you use it, you
+get the value from cache memory. Lazy initialization was designed to prevent unnecessary initialization of objects.
+
+>The variable can only be `val` and non-nullable.
 
 <br/>
 
@@ -1111,3 +1121,4 @@ fun main(args: Array<String>) {
     println(number)
 }
 ```
+
