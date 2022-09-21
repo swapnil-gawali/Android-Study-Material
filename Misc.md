@@ -154,3 +154,37 @@ it is similar to the `takeIf` but in reversed. if condition is `true` then retur
 ```kotlin
  println("swapnil".takeUnless { it == "it is swapnil" } ?: "Not a person!")
 ```
+
+<br/>
+
+### Backing field
+
+Backing field is represented by the `field` keyword, and it stores value of own property.
+
+For e.g. when we create custom getter and setter in kotlin, for accessing own value of that property we need to use
+backing field.
+
+```kotlin
+ var a: Int = 1
+    get() {
+        return field * 2
+    }
+    set(value) {
+        field = value + 1
+    }
+```
+
+<br/>
+
+### Backing property
+
+backing property is way to restrict modifying data in the class from another class.
+
+For e.g. we have livedata object inside view-model, and we do not accidentally modify its data from outside the class,
+then we can make that livedata to private and make public accessible backing property using getter which cant be
+modified.
+
+```kotlin
+private val _name = MutableLiveData<String>()
+val selectedItemList: LiveData<String> get() = _name
+```

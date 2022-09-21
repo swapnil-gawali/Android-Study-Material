@@ -34,8 +34,6 @@ hashmap loops
 
 intents
 
-backing field in kotlin
-
 launch modes
 
 string builders
@@ -47,5 +45,8 @@ any class
 
 what is lambda
 
+arraylist vs list
+
+kotlin getter setter
 
 

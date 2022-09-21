@@ -36,7 +36,7 @@ Main Thread can only be used for small and lightweight operations.
 A Background Service performs an operation that isn't directly noticed by users. For example, getting location of user
 or in-app content updates like writing to storage.
 
-> **Note:** If app targets API 26 or higher, system might kill services if app is not in the foreground.
+> **Note:** If app targets API 26 (Android 8 Oreo) or higher, system might kill services if app is not in the foreground.
 > For example, accessing user location from the background, instead we should use WorkManager or Job Scheduler API.
 
 <br/>

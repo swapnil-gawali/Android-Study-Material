@@ -41,6 +41,8 @@ For creating a Thread, we need to create object of it and pass a class which imp
 
 We can start thread using `thread.start()` method.
 
+##### Using Runnable interface
+
 ```java
 public class ExampleThread implements Runnable {
     @Override
@@ -67,6 +69,38 @@ Executing task on thread
 ```
 
 > We can check on which thread out task is running using `Thread.currentThread().getName()`
+
+<br/>
+
+##### Using `Thread` class
+
+```java
+public class ExampleThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName());
+        System.out.println("Executing task on thread");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // creating thread
+        Thread thread = new ExampleThread();
+        // starting thread
+        thread.start();
+    }
+}
+```
+
+<br/>
+
+#### `Thread` class vs `Runnable` interface
+
+Both used to perform operation on background thread but when we `extend` a `Thread` class then we cant extend any
+other class but on other hand if we implement `Runnable` interface, then we can extend any other class if needed.
+
+> `Thread` class implements `Runnable` interface
 
 <br/>
 
@@ -136,6 +170,9 @@ public class Main {
 
 In the above example, ReadFileThread will wait until DownloadFileThread execution finishes.
 
+> In simple words, when we have two threads and we need to execute them sequentially by one after another, then we need
+> to `join()` thread.
+
 <br/>
 
 #### Interrupting a Thread
@@ -181,6 +218,8 @@ public class Main {
     }
 }
 ```
+
+> Interrupting a thread means cancelling a thread.
 
 <br/>
 
@@ -362,7 +401,7 @@ val job = GlobalScope.launch {
 ### Cancelling Coroutine
 
 ```kotlin
-job.cance()
+job.cancel()
 ```
 
 This will cancel any running coroutines job.
