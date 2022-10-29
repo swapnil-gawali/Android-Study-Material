@@ -188,3 +188,26 @@ modified.
 private val _name = MutableLiveData<String>()
 val selectedItemList: LiveData<String> get() = _name
 ```
+
+<br/>
+
+### SOLID Principal
+
+SOLID stands for:
+
+1. Single Responsibility Principle (SRP)
+2. Open-Closed Principle (OCP)
+3. Liskov Substitution Principle (LSP)
+4. Interface Segregation Principle (ISP)
+5. Dependency Inversion Principle (DIP)
+
+#### 1. Single Responsibility Principle
+
+It states that every class must perform a single functionality.
+
+For e.g. If we are using repository in our android project, this repository must only responsible to perform database or
+network operations and pass that result to the view-model.
+
+#### 2. Open-Closed Principle
+
+Its states that every module/class should be open for extension but closed for modifications. 

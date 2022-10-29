@@ -16,6 +16,18 @@ When multiple threads are executed in parallel at the same time, this process is
 MultiThreading takes advantages of multiple cores available in our CPU. If application is not using threads then it is
 basically using single core of the machine.
 
+<br/>
+
+### Thread Safety
+
+When multiple threads working on same data and the value is changing, that scenario is not thread-safe, and we will get
+inconsistent result.
+
+When a thread is already working on an object and preventing another thread on working on the same object, this process
+is called thread-safety.
+
+<br/>
+
 ### Thread
 
 A Thread is a lightweight process which allow us to perform complex tasks in the background.

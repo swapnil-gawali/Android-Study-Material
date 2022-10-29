@@ -18,7 +18,7 @@ android permissions
 threads, looper, handler, async-task thread pool weak reference
 
 builder pattern
-Collections class
+Collections, Arrays class
 
 inline functions
 
